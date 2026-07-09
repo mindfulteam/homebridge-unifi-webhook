@@ -1,0 +1,21 @@
+package-lock.json
+  s_e272eb57211273::t_99839652ca061f 3,9
+package.json
+  s_e272eb57211273::t_ed6ae74ddcf08e 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "935b79c738fb2f2f7ddf275ea1bc9c389e9e136b",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
