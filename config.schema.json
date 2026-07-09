@@ -68,7 +68,7 @@
               "title": "Require Double Press (safety)",
               "type": "boolean",
               "default": false,
-              "description": "Safety guard against accidental triggers: the switch must be turned on twice within the confirmation window before the webhook fires. Because arming and firing are separate actions, Siri, scenes, and automations can only arm a double-press button — they can never fire it."
+              "description": "Safety guard against accidental triggers: press the switch once to arm it (it stays on to show it is waiting), then press again within the confirmation window to fire the webhook. A single activation only arms the button — so a scene, automation, or Siri command that switches it on can arm it but will not fire it."
             },
             "doublePressWindowSeconds": {
               "title": "Confirmation Window (seconds)",

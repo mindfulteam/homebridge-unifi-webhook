@@ -12,11 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Double-press confirmation for buttons (safety guard).** Set
   `requireDoublePress: true` on a button to require two presses within a short
   window before its webhook fires — protection against an accidental single tap
-  on destructive actions like a siren. The first press *arms* the switch and it
-  flicks back off; press it again within the window to fire. The window is
-  configurable per button via `doublePressWindowSeconds` (default `3`, range
-  1–30). Because arming and firing are two separate actions, Siri, scenes, and
-  automations can only *arm* a double-press button — they can never fire it.
+  on destructive actions like a siren. Press the switch once to arm it (it stays
+  on to show it is waiting), then press again within the window to fire; the
+  window is configurable per button via `doublePressWindowSeconds` (default `3`,
+  range 1–30). A single activation only arms the button, so a scene, automation,
+  or Siri command that switches it on can arm it but will not fire it.
 
 ### Notes
 

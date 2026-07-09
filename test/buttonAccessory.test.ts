@@ -208,63 +208,56 @@ describe('ButtonAccessory', () => {
 describe('ButtonAccessory — double-press confirmation', () => {
   const DOUBLE: ButtonConfig = { ...BUTTON, requireDoublePress: true, doublePressWindowMs: 3000 };
 
-  it('arms without firing on the first press, then bounces the switch off', async () => {
-    const { send, pressOn, readState, switchService, log } = createHarness(DOUBLE);
+  it('arms on the first press without firing, holding the switch on', () => {
+    const { send, pressOn, readState, log } = createHarness(DOUBLE);
 
     pressOn();
 
     expect(send).not.toHaveBeenCalled();
-    expect(readState()).toBe(true);
-    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('press again'));
-
-    await vi.advanceTimersByTimeAsync(300);
-    expect(switchService.updateCharacteristic).toHaveBeenCalledWith('On', false);
-    expect(readState()).toBe(false);
+    expect(readState()).toBe(true); // stays on as the armed indicator
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('armed'));
   });
 
-  it('fires exactly once when confirmed within the window', async () => {
-    const { send, pressOn } = createHarness(DOUBLE);
+  it('fires when the armed switch is pressed again (toggled off) within the window', () => {
+    const { send, pressOn, pressOff } = createHarness(DOUBLE);
 
-    pressOn();
-    await vi.advanceTimersByTimeAsync(300);
-    pressOn();
+    pressOn();  // arm
+    pressOff(); // confirming second press — a real controller sends On=false here
 
     expect(send).toHaveBeenCalledTimes(1);
   });
 
-  it('re-arms instead of firing when the second press is too late', async () => {
-    const { send, pressOn, log } = createHarness(DOUBLE);
+  it('fires on a rapid second press — no dependence on tap timing', async () => {
+    const { send, pressOn, pressOff } = createHarness(DOUBLE);
 
     pressOn();
-    await vi.advanceTimersByTimeAsync(3000);
-    expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
-
-    pressOn();
-    expect(send).not.toHaveBeenCalled();
-  });
-
-  it('disarms on a manual off and never fires', async () => {
-    const { send, pressOn, pressOff, log } = createHarness(DOUBLE);
-
-    pressOn();
+    await vi.advanceTimersByTimeAsync(50);
     pressOff();
 
-    await vi.advanceTimersByTimeAsync(3000);
-    expect(send).not.toHaveBeenCalled();
-    expect(log.debug).not.toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+    expect(send).toHaveBeenCalledTimes(1);
   });
 
-  it('does not log a lapsed window after a confirmed fire', async () => {
-    const { pressOn, resolveSend, log } = createHarness(DOUBLE);
+  it('disarms and resets the switch when not confirmed within the window', async () => {
+    const { send, pressOn, readState, switchService, log } = createHarness(DOUBLE);
 
     pressOn();
-    await vi.advanceTimersByTimeAsync(300);
-    pressOn();
-    resolveSend({ ok: true, status: 204, durationMs: 5 });
-    await flush();
-
     await vi.advanceTimersByTimeAsync(3000);
-    expect(log.debug).not.toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+
+    expect(send).not.toHaveBeenCalled();
+    expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+    expect(switchService.updateCharacteristic).toHaveBeenCalledWith('On', false);
+    expect(readState()).toBe(false);
+  });
+
+  it('does not fire on a repeated on-press while armed (redundant activation)', async () => {
+    const { send, pressOn } = createHarness(DOUBLE);
+
+    pressOn(); // arm
+    pressOn(); // e.g. a scene or automation re-issuing "on"
+
+    expect(send).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(send).not.toHaveBeenCalled();
   });
 
   it('clears the arm timer on dispose', async () => {
@@ -277,13 +270,15 @@ describe('ButtonAccessory — double-press confirmation', () => {
     expect(log.debug).not.toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
   });
 
-  it('confirms even when the second press arrives before the arm bounce', async () => {
-    const { send, pressOn } = createHarness(DOUBLE);
+  it('re-arms after a lapsed window instead of firing', async () => {
+    const { send, pressOn, pressOff } = createHarness(DOUBLE);
 
     pressOn();
-    await vi.advanceTimersByTimeAsync(200);
-    pressOn();
+    await vi.advanceTimersByTimeAsync(3000); // window lapses
+    pressOn();                               // fresh arm
+    expect(send).not.toHaveBeenCalled();
 
+    pressOff();                              // confirm the fresh arm
     expect(send).toHaveBeenCalledTimes(1);
   });
 });

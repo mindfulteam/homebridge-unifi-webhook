@@ -131,9 +131,9 @@ Rapid double-taps while a request is still in flight are coalesced into one trig
 
 ### Double-press confirmation (safety)
 
-Set `requireDoublePress: true` on a button to guard it against accidental triggers. The first press *arms* the switch and it immediately flicks back off; press it again within the window (`doublePressWindowSeconds`, default 3) to actually fire the webhook. **Wait for the switch to settle back to off before the second press** — tapping again while it still shows on reads as an "off" and simply cancels the arm. If the second press doesn't arrive in time, the arm lapses and nothing is sent.
+Set `requireDoublePress: true` on a button to guard it against accidental triggers. Press the switch once to *arm* it — it stays on to show it is waiting — then press it again within the window (`doublePressWindowSeconds`, default 3) to fire the webhook. If the second press doesn't arrive in time, the switch disarms and resets itself, and nothing is sent.
 
-Because arming and firing are two separate "on" actions, **Siri, scenes, and Home app automations can only ever arm a double-press button — they cannot fire it.** That is the point: a siren or gate won't trigger just because an automation ran or "Hey Siri" was misheard. If you need a button that automations can fire, leave `requireDoublePress` off (the default).
+Because firing needs that deliberate second press, **a single activation only ever arms the button** — so Siri, a scene, or an automation that switches it on can arm it but cannot fire it. That is the point: a siren or gate won't trigger just because an automation ran or "Hey Siri" was misheard. If you need a button an automation can fire, leave `requireDoublePress` off (the default).
 
 ### Renaming buttons & accessory identity
 
