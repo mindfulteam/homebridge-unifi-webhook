@@ -1,0 +1,29 @@
+README.md
+  s_e272eb57211273::t_3ce467aec417c2 1-4
+  s_e272eb57211273::t_ad23b36b0d5395 26
+  s_e272eb57211273::t_70db113bd1462b 165-168
+.vscode/extensions.json
+  s_e272eb57211273::t_9ee0bf5c907f19 1-5
+.vscode/settings.json
+  s_e272eb57211273::t_3cfbb9117b7f24 1-10
+.gitignore
+  s_e272eb57211273::t_a0bab2446f3469 6-7
+package.json
+  s_e272eb57211273::t_0e73b522daae85 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "53d86b21deb2b6c373ff0f16b39f9de0e6263465",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
