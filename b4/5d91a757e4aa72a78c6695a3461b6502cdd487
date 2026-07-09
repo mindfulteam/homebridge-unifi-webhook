@@ -1,0 +1,31 @@
+CHANGELOG.md
+  s_e272eb57211273::t_b246e0909e2ddf 1-29
+.github/workflows/build.yml
+  s_e272eb57211273::t_168a0df23ae561 1-40
+.github/workflows/publish.yml
+  s_e272eb57211273::t_4fc92da9855f46 1-29
+README.md
+  s_e272eb57211273::t_6de8e62b877bf9 2-163
+.github/ISSUE_TEMPLATE/bug_report.yml
+  s_e272eb57211273::t_9428f7fec625e8 1-45
+.github/ISSUE_TEMPLATE/feature_request.yml
+  s_e272eb57211273::t_d79ff461b6c70e 1-17
+.github/ISSUE_TEMPLATE/config.yml
+  s_e272eb57211273::t_bf8c22e0176ffc 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b45d91a757e4aa72a78c6695a3461b6502cdd487",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
