@@ -1,0 +1,63 @@
+test/uiLib.test.ts
+  s_baa2bf2c4aaf3b::t_264d14e6f52bda 1-106
+CHANGELOG.md
+  s_baa2bf2c4aaf3b::t_c950a259ff361f 27-44
+  s_baa2bf2c4aaf3b::t_a664382fe7d0de 68
+  s_baa2bf2c4aaf3b::t_7b3589dd9fb352 8
+.claude/skills/verify/SKILL.md
+  s_baa2bf2c4aaf3b::t_0bcdd647a54879 1-51
+homebridge-ui/public/lib.d.ts
+  s_baa2bf2c4aaf3b::t_5a8687eeba5d9a 1-24
+test/schema.test.ts
+  s_baa2bf2c4aaf3b::t_aeb4a3ad16aeff 1-56
+package.json
+  s_baa2bf2c4aaf3b::t_9e50d9cf77b909 3
+  s_baa2bf2c4aaf3b::t_372b1e192934f2 5
+homebridge-ui/public/lib.js
+  s_baa2bf2c4aaf3b::t_c29d7cac689709 1-69
+homebridge-ui/public/ui.js
+  s_baa2bf2c4aaf3b::t_3be5fb26dfa74b 121-122
+  s_baa2bf2c4aaf3b::t_daa334c004b893 3,5-24,26-28,30,32,34-43,46-48,50-57,59-68,70-73,75-76,78-80,82-84,86-87,89-91,93,96-102,104-120,123-145,149-150,152-161,163,165,167-182,184,186,188-195,199-209,211-247,249-273,275-278,280-284
+  s_baa2bf2c4aaf3b::t_0d6b9733efd88d 103
+  s_baa2bf2c4aaf3b::t_bb5fd727f2460b 210
+  s_baa2bf2c4aaf3b::t_3402385b968706 187
+  s_baa2bf2c4aaf3b::t_44ebe92fa59186 146-148
+README.md
+  s_baa2bf2c4aaf3b::t_47d43ab852ceb7 222-223
+  s_baa2bf2c4aaf3b::t_1aa2412723ce90 37
+  s_baa2bf2c4aaf3b::t_6e838c1e5f94d5 151
+  s_baa2bf2c4aaf3b::t_26b8410ca6406b 100
+  s_baa2bf2c4aaf3b::t_726e3686463974 234
+  s_baa2bf2c4aaf3b::t_8776d2ee88a7a6 78,171
+  s_baa2bf2c4aaf3b::t_8a6fa2184a00ef 2
+test/hbConfig/config.json
+  s_baa2bf2c4aaf3b::t_edc6dddc2623a6 3
+  s_baa2bf2c4aaf3b::t_91115c41fa8826 11
+config.schema.json
+  s_baa2bf2c4aaf3b::t_54e1c146d3bbcc 109
+  s_baa2bf2c4aaf3b::t_f1e4950f9020fc 13
+  s_baa2bf2c4aaf3b::t_8fdacfaf2c859a 5
+  s_baa2bf2c4aaf3b::t_39401dbf3f6afe 129
+  s_baa2bf2c4aaf3b::t_66d090c42c0887 199
+  s_baa2bf2c4aaf3b::t_a38b329832071f 6
+homebridge-ui/public/index.html
+  s_baa2bf2c4aaf3b::t_f1cecfd5463aba 2-14,17-29,32,34-41,45-56
+package-lock.json
+  s_baa2bf2c4aaf3b::t_a71c605409a88a 3,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c7128eef33c93d036d03134550bae31dda7e015c",
+  "prompts": {},
+  "sessions": {
+    "s_baa2bf2c4aaf3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0bb5d4-a1de-43b6-b093-a1bc2fb13f18",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
