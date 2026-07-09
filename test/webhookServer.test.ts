@@ -191,6 +191,50 @@ describe('WebhookServer', () => {
     }
   });
 
+  it('does not leak the token when the path has extra segments', async () => {
+    const target = makeTarget('Doorbell');
+    const { port, log } = await start(new Map([[TOKEN, target]]));
+
+    const res = await send(port, `/webhook/${TOKEN}/extra`);
+
+    expect(res.status).toBe(404);
+    expect(target.calls).toHaveLength(0);
+    for (const line of logLines(log)) {
+      expect(line).not.toContain(TOKEN);
+    }
+  });
+
+  it('strips control characters from the alarm name before it reaches the trigger', async () => {
+    const target = makeTarget('Doorbell');
+    const { port } = await start(new Map([[TOKEN, target]]));
+
+    const esc = String.fromCharCode(27);
+    const newline = String.fromCharCode(10);
+    const body = JSON.stringify({ alarm: { name: `Front${newline}Door${esc}[31m` }, timestamp: 1 });
+    await send(port, `/webhook/${TOKEN}`, { headers: { 'content-type': 'application/json' }, body });
+
+    const source = String(target.calls[0]);
+    expect(source).not.toContain(newline);
+    expect(source).not.toContain(esc);
+    expect(source).toContain('Front Door');
+  });
+
+  it('contains a throw from the sensor instead of crashing the server', async () => {
+    const throwing: WebhookTarget = {
+      name: 'Boom',
+      trigger: () => {
+        throw new Error('boom');
+      },
+    };
+    const { port, log } = await start(new Map([[TOKEN, throwing]]));
+
+    const res = await send(port, `/webhook/${TOKEN}`);
+
+    expect(res.status).toBe(200); // acknowledged before the sensor pulse ran
+    const errors = (log.error as unknown as { mock: { calls: unknown[][] } }).mock.calls.map((c) => String(c[0]));
+    expect(errors.join('\n')).toContain('handler error');
+  });
+
   it('logs a clear error and stays down when the port is already in use', async () => {
     const target = makeTarget('Doorbell');
     const first = await start(new Map([[TOKEN, target]]));

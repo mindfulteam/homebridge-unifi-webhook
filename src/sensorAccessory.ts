@@ -11,6 +11,7 @@ export interface SensorAccessoryContext {
    * so an auto-generated token survives restarts and the webhook URL stays stable.
    */
   token: string;
+  tokenSource: 'auto' | 'explicit';
   sensorType: SensorConfig['sensorType'];
   schemaVersion: number;
 }

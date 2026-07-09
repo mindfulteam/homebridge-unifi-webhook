@@ -119,7 +119,7 @@ export class WebhookServer {
     const target = token !== undefined ? options.routes.get(token) : undefined;
     if (target === undefined) {
       // Unknown or malformed token → 404, indistinguishable from any random path.
-      this.reject(req, res, 404, 'Not Found', `no sensor for ${redactPath(req.url)}`, source);
+      this.reject(req, res, 404, 'Not Found', `no sensor for ${redactPath(req.url, PATH_PREFIX)}`, source);
       return;
     }
 
@@ -129,16 +129,18 @@ export class WebhookServer {
     }
 
     this.consumeBody(req, (result) => {
-      if (result.tooLarge) {
-        // Stop buffering, but let consumeBody keep draining to end so the client
-        // still gets this clean 413 instead of a mid-upload connection reset.
-        this.log.warn(`"${target.name}": webhook body exceeded ${MAX_BODY_BYTES} bytes — ignoring the request.`);
-        this.respond(res, 413, 'Payload Too Large');
-        return;
+      try {
+        if (result.tooLarge) {
+          this.log.warn(`"${target.name}": webhook body exceeded ${MAX_BODY_BYTES} bytes — ignoring the request.`);
+          this.respond(res, 413, 'Payload Too Large');
+          return;
+        }
+        this.respond(res, 200, 'OK');
+        target.trigger(describeSource(source, result.body));
+      } catch (error) {
+        this.log.error(`Webhook handler error: ${describeError(error)}`);
+        this.respond(res, 500, 'Internal Server Error');
       }
-      // Acknowledge first (UniFi retries on non-2xx), then pulse the sensor.
-      this.respond(res, 200, 'OK');
-      target.trigger(describeSource(source, result.body));
     });
   }
 
@@ -272,7 +274,7 @@ function alarmNameFrom(body: Buffer): string | undefined {
     const alarm = isRecord(parsed) ? parsed.alarm : undefined;
     const name = isRecord(alarm) ? alarm.name : undefined;
     if (typeof name === 'string' && name.trim().length > 0) {
-      return name.trim().slice(0, MAX_ALARM_NAME_LENGTH);
+      return name.trim().replace(/\p{Cc}/gu, ' ').slice(0, MAX_ALARM_NAME_LENGTH);
     }
   } catch {
     // Not the expected UniFi JSON — the token already routed the request, so this is fine.

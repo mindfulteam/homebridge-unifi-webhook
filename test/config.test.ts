@@ -230,6 +230,19 @@ describe('validateConfig — sensors', () => {
     expect(log.error).toHaveBeenCalledWith(expect.stringContaining('"First"'));
   });
 
+  it('rejects two sensors that share an explicit token but have distinct ids', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({
+      sensors: [
+        { name: 'First', id: 'a', token: 'a-shared-explicit-token' },
+        { name: 'Second', id: 'b', token: 'a-shared-explicit-token' },
+      ],
+    }), log);
+
+    expect(config.sensors.map((s) => s.name)).toEqual(['First']);
+    expect(log.error).toHaveBeenCalledWith(expect.stringContaining('already used by "First"'));
+  });
+
   it('tolerates a malformed sensors value', () => {
     const log = createLog();
     expect(validateConfig(asPlatformConfig({ sensors: 'nope' }), log).sensors).toEqual([]);

@@ -145,7 +145,7 @@ export class UniFiWebhookPlatform implements DynamicPlatformPlugin {
       activeUuids.add(uuid);
 
       const cached = this.cachedAccessories.get(uuid);
-      const token = this.resolveToken(sensor, cached);
+      const { token, source } = this.resolveToken(sensor, cached);
 
       let accessory: PlatformAccessory<SensorAccessoryContext>;
       if (cached) {
@@ -155,6 +155,7 @@ export class UniFiWebhookPlatform implements DynamicPlatformPlugin {
         const contextStale =
           context?.key !== sensor.key ||
           context?.token !== token ||
+          context?.tokenSource !== source ||
           context?.sensorType !== sensor.sensorType ||
           context?.schemaVersion !== CONTEXT_SCHEMA_VERSION;
         if (renamed) {
@@ -162,7 +163,7 @@ export class UniFiWebhookPlatform implements DynamicPlatformPlugin {
           accessory.updateDisplayName(sensor.name);
         }
         if (contextStale) {
-          accessory.context = { key: sensor.key, token, sensorType: sensor.sensorType, schemaVersion: CONTEXT_SCHEMA_VERSION };
+          accessory.context = { key: sensor.key, token, tokenSource: source, sensorType: sensor.sensorType, schemaVersion: CONTEXT_SCHEMA_VERSION };
         }
         const handler = new SensorAccessory(this, accessory, sensor);
         this.handlers.push(handler);
@@ -177,7 +178,7 @@ export class UniFiWebhookPlatform implements DynamicPlatformPlugin {
           uuid,
           this.api.hap.Categories.SENSOR,
         );
-        accessory.context = { key: sensor.key, token, sensorType: sensor.sensorType, schemaVersion: CONTEXT_SCHEMA_VERSION };
+        accessory.context = { key: sensor.key, token, tokenSource: source, sensorType: sensor.sensorType, schemaVersion: CONTEXT_SCHEMA_VERSION };
         const handler = new SensorAccessory(this, accessory, sensor);
         this.handlers.push(handler);
         this.routes.set(token, handler);
@@ -188,26 +189,24 @@ export class UniFiWebhookPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  /**
-   * Resolves the sensor's secret token: an explicit config token wins; otherwise
-   * the previously generated one persisted in the accessory context is reused;
-   * otherwise a fresh high-entropy token is minted (first launch).
-   */
-  private resolveToken(sensor: SensorConfig, cached: PlatformAccessory | undefined): string {
+  /** Resolves the sensor's token: explicit config token, else a persisted auto token, else a fresh one. */
+  private resolveToken(sensor: SensorConfig, cached: PlatformAccessory | undefined): { token: string; source: 'auto' | 'explicit' } {
     if (sensor.token !== undefined) {
-      return sensor.token;
+      return { token: sensor.token, source: 'explicit' };
     }
-    const persisted = (cached?.context as Partial<SensorAccessoryContext> | undefined)?.token;
-    if (typeof persisted === 'string' && persisted.length > 0) {
-      return persisted;
+    const context = cached?.context as Partial<SensorAccessoryContext> | undefined;
+    const persisted = context?.token;
+    if (typeof persisted === 'string' && persisted.length > 0 && context?.tokenSource !== 'explicit') {
+      return { token: persisted, source: 'auto' };
     }
-    return randomBytes(24).toString('base64url');
+    return { token: randomBytes(24).toString('base64url'), source: 'auto' };
   }
 
   /** Logs the ready-to-paste webhook URL once at startup (the sanctioned secret surface). */
   private announceSensorUrl(sensor: SensorConfig, token: string): void {
     const host = displayHost(this.config.bindHost);
-    const url = `http://${host}:${this.config.port}${PATH_PREFIX}${token}`;
+    const hostForUrl = host.includes(':') ? `[${host}]` : host;
+    const url = `http://${hostForUrl}:${this.config.port}${PATH_PREFIX}${encodeURIComponent(token)}`;
     this.log.info(`Sensor "${sensor.name}" (${sensor.sensorType}) — paste into the UniFi Alarm Manager webhook action: ${url}`);
   }
 

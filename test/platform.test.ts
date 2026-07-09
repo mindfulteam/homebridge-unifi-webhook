@@ -171,7 +171,7 @@ describe('UniFiWebhookPlatform', () => {
 
   it('reuses a persisted auto-generated token across restarts', () => {
     const cached = new FakePlatformAccessory('Doorbell', sensorUuidFor('doorbell'));
-    cached.context = { key: 'doorbell', token: 'persisted-token', sensorType: 'contact', schemaVersion: 1 };
+    cached.context = { key: 'doorbell', token: 'persisted-token', tokenSource: 'auto', sensorType: 'contact', schemaVersion: 1 };
 
     const server = fakeServer();
     const platform = new UniFiWebhookPlatform(
@@ -187,6 +187,29 @@ describe('UniFiWebhookPlatform', () => {
     expect(api.updatePlatformAccessories).not.toHaveBeenCalled(); // token unchanged — no disk write
     const options = vi.mocked(server.start).mock.calls[0]![0];
     expect(options.routes.get('persisted-token')).toBeDefined();
+  });
+
+  it('mints a fresh token when an explicit token is removed from config', () => {
+    const cached = new FakePlatformAccessory('Doorbell', sensorUuidFor('doorbell'));
+    cached.context = { key: 'doorbell', token: 'old-explicit', tokenSource: 'explicit', sensorType: 'contact', schemaVersion: 1 };
+
+    const server = fakeServer();
+    const platform = new UniFiWebhookPlatform(
+      createMockLog(),
+      asPlatformConfig({ sensors: [{ name: 'Doorbell', id: 'doorbell' }] }), // token removed
+      api.asApi(),
+      server,
+    );
+    platform.configureAccessory(cached as unknown as PlatformAccessory);
+    api.emit('didFinishLaunching');
+
+    const options = vi.mocked(server.start).mock.calls[0]![0];
+    expect(options.routes.get('old-explicit')).toBeUndefined(); // the rotated-out secret no longer works
+    expect(options.routes.size).toBe(1);
+    expect(api.updatePlatformAccessories).toHaveBeenCalled();
+    const newToken = (cached.context as { token: string }).token;
+    expect(newToken).not.toBe('old-explicit');
+    expect(options.routes.get(newToken)).toBeDefined();
   });
 
   it('does not collide a sensor with a button that shares the same key', () => {

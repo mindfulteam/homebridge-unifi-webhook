@@ -32,11 +32,8 @@ export function redactUrl(url: URL | string): string {
   return `${parsed.origin}${segments.join('/')}${query}`;
 }
 
-/**
- * Masks the token segment of an incoming request path (`/webhook/<token>`) so
- * per-request logs never carry the secret.
- */
-export function redactPath(rawPath: string | undefined): string {
+/** Masks the token (everything after `prefix`) in a request path so logs never carry it. */
+export function redactPath(rawPath: string | undefined, prefix = '/'): string {
   if (rawPath === undefined) {
     return '<none>';
   }
@@ -46,8 +43,11 @@ export function redactPath(rawPath: string | undefined): string {
   } catch {
     return '<invalid path>';
   }
-  const segments = pathname.split('/');
-  const last = segments[segments.length - 1] ?? '';
-  segments[segments.length - 1] = redactToken(last);
-  return segments.join('/');
+  const at = pathname.indexOf(prefix);
+  if (at === -1) {
+    return pathname.split('/').map((segment) => (segment.length > 0 ? redactToken(segment) : segment)).join('/');
+  }
+  const head = pathname.slice(0, at + prefix.length);
+  const rest = pathname.slice(at + prefix.length);
+  return rest.length > 0 ? `${head}${redactToken(rest)}` : pathname;
 }

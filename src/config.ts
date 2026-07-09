@@ -137,6 +137,7 @@ function validateSensors(rawValue: unknown, log: ValidationLog): SensorConfig[] 
 
   const sensors: SensorConfig[] = [];
   const nameByKey = new Map<string, string>();
+  const nameByToken = new Map<string, string>();
   rawSensors.forEach((entry, index) => {
     const sensor = validateSensor(entry, index, log);
     if (!sensor) {
@@ -149,6 +150,17 @@ function validateSensors(rawValue: unknown, log: ValidationLog): SensorConfig[] 
         'Give each sensor a distinct "id" (or "token").',
       );
       return;
+    }
+    if (sensor.token !== undefined) {
+      const clashingName = nameByToken.get(sensor.token);
+      if (clashingName !== undefined) {
+        log.error(
+          `Skipping sensor ${index + 1} ("${sensor.name}"): its "token" is already used by "${clashingName}". ` +
+          'Each sensor needs a distinct token.',
+        );
+        return;
+      }
+      nameByToken.set(sensor.token, sensor.name);
     }
     nameByKey.set(sensor.key, sensor.name);
     sensors.push(sensor);
