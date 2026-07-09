@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/mindfulteam/homebridge-unifi-webhook/main/assets/icon.png" width="120" alt="homebridge-unifi-webhook icon">
+<img src="https://media.stefanh.co/github/cover.png" alt="homebridge-unifi-webhook — Unifi Protect Webhook Button">
 </p>
 
 # homebridge-unifi-webhook
