@@ -3,6 +3,8 @@ dist/
 coverage/
 *.tgz
 *.log
+*.tsbuildinfo
+.eslintcache
 .DS_Store
 
 # Homebridge runtime artifacts from the local dev instance (`npm run watch`)

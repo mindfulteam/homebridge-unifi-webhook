@@ -32,7 +32,7 @@
   ],
   "engines": {
     "node": "^22.10.0 || ^24.0.0",
-    "homebridge": "^1.8.0 || ^2.0.0"
+    "homebridge": "^1.9.0 || ^2.0.0"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",

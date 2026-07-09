@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://github.com/homebridge/branding/raw/latest/logos/homebridge-wordmark-logo-vertical.png" width="150">
+</p>
+
 # homebridge-unifi-webhook
 
 [![npm version](https://img.shields.io/npm/v/homebridge-unifi-webhook)](https://www.npmjs.com/package/homebridge-unifi-webhook)
@@ -19,7 +23,7 @@ Flip a switch in the Home app — or ask Siri, or let a HomeKit automation do it
 
 | | |
 |---|---|
-| Homebridge | `^1.8.0` or `^2.0.0` |
+| Homebridge | `^1.9.0` or `^2.0.0` |
 | Node.js | 22 or 24 (current LTS versions) |
 | UniFi Protect | A console with **Alarm Manager** (UniFi OS 4+ / Protect 5+) |
 
@@ -157,6 +161,10 @@ npm run watch                         # dev Homebridge on test/hbConfig (termina
 ```
 
 `npm run watch` builds, then starts a local Homebridge (`-U ./test/hbConfig -P . -D`) that loads the plugin from the working tree and restarts on changes. The bundled `test/hbConfig/config.json` points two buttons at the mock webhook server; pair the bridge from the Home app (PIN `031-45-154`) to click them. `scripts/mock-webhook.mjs --status 500` and `--delay 15000` exercise the failure and timeout paths.
+
+### Releasing (maintainers)
+
+Versions follow [SemVer](https://semver.org): `npm version patch|minor|major`, push with tags, then publish a GitHub release with notes mirroring the [CHANGELOG](CHANGELOG.md) — the release triggers the npm publish workflow (provenance included). For pre-releases: `npm version prepatch --preid beta && npm publish --tag beta`, installable via `npm install -g homebridge-unifi-webhook@beta`.
 
 ## License
 
