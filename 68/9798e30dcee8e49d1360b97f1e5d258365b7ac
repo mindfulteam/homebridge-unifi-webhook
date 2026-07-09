@@ -1,0 +1,21 @@
+README.md
+  s_f4a5d4c2a4902a::t_a061a0c3022747 255-260
+.github/workflows/publish.yml
+  s_f4a5d4c2a4902a::t_7a56b4ce81e3b9 1-6,9,12-17,20,22,26-28,41-44,46,51,54-62,64-80,85-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "689798e30dcee8e49d1360b97f1e5d258365b7ac",
+  "prompts": {},
+  "sessions": {
+    "s_f4a5d4c2a4902a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30e82281-0e2b-4dab-9df2-28f9aa0df428",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
