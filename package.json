@@ -2,7 +2,7 @@
   "name": "homebridge-unifi-webhook",
   "displayName": "UniFi Webhook",
   "type": "module",
-  "version": "1.1.0-beta.1",
+  "version": "1.1.0-beta.2",
   "description": "Two-way UniFi Protect Alarm Manager bridge for HomeKit: momentary switches fire outgoing webhooks, and sensors are driven by incoming webhooks.",
   "author": "Mindful Team",
   "license": "Apache-2.0",
