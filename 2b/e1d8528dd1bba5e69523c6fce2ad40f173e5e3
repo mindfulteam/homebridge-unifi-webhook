@@ -1,0 +1,34 @@
+test/redact.test.ts
+  s_e272eb57211273::t_eb246d40d2853b 1-31
+test/webhookClient.test.ts
+  s_e272eb57211273::t_fc8f7791bc6b64 1-202
+scripts/mock-webhook.mjs
+  s_e272eb57211273::t_f8407cae87eca4 1-32
+test/config.test.ts
+  s_e272eb57211273::t_0b5e7b82b62f41 1-57,59-152
+  s_e272eb57211273::t_68b9157a7d1526 58
+test/platform.test.ts
+  s_e272eb57211273::t_5d19ce61289a4a 1-129
+test/hbConfig/config.json
+  s_e272eb57211273::t_74f4f0f74a08d8 1-27
+test/buttonAccessory.test.ts
+  s_e272eb57211273::t_eaa40e08f15078 1-204
+test/mocks/homebridgeApi.ts
+  s_e272eb57211273::t_47aa407798b5ba 1-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2be1d8528dd1bba5e69523c6fce2ad40f173e5e3",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
