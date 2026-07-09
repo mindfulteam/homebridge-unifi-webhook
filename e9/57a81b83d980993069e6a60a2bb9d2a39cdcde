@@ -1,0 +1,19 @@
+.github/workflows/publish.yml
+  s_f968892555e89e::t_b9287cc6b08a26 25,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e957a81b83d980993069e6a60a2bb9d2a39cdcde",
+  "prompts": {},
+  "sessions": {
+    "s_f968892555e89e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "271bf723-34e3-48fd-856c-82cf84bceb9e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
