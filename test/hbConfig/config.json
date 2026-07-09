@@ -1,6 +1,6 @@
 {
   "bridge": {
-    "name": "Homebridge UniFi Webhook Dev",
+    "name": "Homebridge UniFi Protect Webhook Dev",
     "username": "0E:B7:2F:11:22:33",
     "port": 51826,
     "pin": "031-45-154"
@@ -8,7 +8,7 @@
   "platforms": [
     {
       "platform": "UniFiWebhook",
-      "name": "UniFi Webhook",
+      "name": "UniFi Protect Webhook",
       "apiKey": "dev-test-key",
       "buttons": [
         {

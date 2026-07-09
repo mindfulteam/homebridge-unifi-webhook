@@ -2,14 +2,15 @@
   "pluginAlias": "UniFiWebhook",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Bridges HomeKit and [UniFi Alarm Manager](https://help.ui.com/hc/en-us/articles/27721287753239) in both directions.\n\n**Buttons — HomeKit → UniFi.** Momentary switches that fire an Alarm Manager webhook when turned on. Create an API key under **Settings → Control Plane → Integrations**, then in **Protect → Alarm Manager** add an alarm with a **Webhook** trigger and paste its URL below.\n\n**Sensors — UniFi → HomeKit.** Contact/Motion/Occupancy sensors that flip when the Alarm Manager posts to this plugin, so Home app automations can react. Give each sensor a stable **ID**; the plugin prints a ready-to-paste webhook URL in the Homebridge log at startup. In **Protect → Alarm Manager**, add an alarm and a **Webhook** action pointing at that URL.",
+  "customUi": true,
+  "headerDisplay": "Bridges HomeKit and [UniFi Alarm Manager](https://help.ui.com/hc/en-us/articles/27721287753239) in both directions.\n\n**Buttons — HomeKit → UniFi.** Momentary switches that fire an Alarm Manager webhook when turned on. Create an API key under **Settings → Control Plane → Integrations**, then in **Protect → Alarm Manager** add an alarm with a **Webhook** trigger and paste its URL below.\n\n**Sensors — UniFi → HomeKit.** Contact/Motion/Occupancy sensors that flip when the Alarm Manager posts to this plugin, so Home app automations can react. Give each sensor a stable **ID**, then copy its ready-to-paste webhook URL from the **Webhooks** tab above (also printed in the Homebridge log at startup). In **Protect → Alarm Manager**, add an alarm and a **Webhook** action pointing at that URL.",
   "schema": {
     "type": "object",
     "properties": {
       "name": {
         "title": "Platform Name",
         "type": "string",
-        "default": "UniFi Webhook",
+        "default": "UniFi Protect Webhook",
         "required": true,
         "description": "The name used for this platform in the Homebridge logs."
       },
@@ -105,7 +106,7 @@
               "title": "Stable ID",
               "type": "string",
               "placeholder": "e.g. doorbell",
-              "description": "Recommended. Anchors the accessory identity and lets the plugin generate and remember the secret webhook URL for you (printed in the log at startup). Required unless you set an explicit Token below."
+              "description": "Recommended. Anchors the accessory identity and lets the plugin generate and remember the secret webhook URL for you — copy it from the Webhooks tab (also printed in the log at startup). Required unless you set an explicit Token below."
             },
             "sensorType": {
               "title": "Sensor Type",
@@ -125,7 +126,7 @@
             "token": {
               "title": "Token (advanced)",
               "type": "string",
-              "description": "The secret path segment of this sensor's webhook URL. Leave empty to let the plugin generate one (needs a Stable ID). Set your own only to control the URL — use a long random string.",
+              "description": "The secret path segment of this sensor's webhook URL. Leave empty to let the plugin generate one (needs a Stable ID), or use the Webhooks tab's Generate button. Set your own only to control the URL — use a long random string.",
               "x-schema-form": {
                 "type": "password"
               }
@@ -195,7 +196,7 @@
       "items": [
         {
           "type": "help",
-          "helpvalue": "<p class='help-block'>Contact/Motion/Occupancy sensors driven by incoming UniFi webhooks. Use the <strong>Incoming webhook URLs</strong> panel above to generate each sensor's secret and copy its ready-to-paste URL.</p>"
+          "helpvalue": "<p class='help-block'>Contact/Motion/Occupancy sensors driven by incoming UniFi webhooks. Use the <strong>Webhooks</strong> tab above to generate each sensor's secret and copy its ready-to-paste URL.</p>"
         },
         {
           "key": "sensors",
