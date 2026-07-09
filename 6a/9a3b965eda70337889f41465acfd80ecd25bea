@@ -1,0 +1,21 @@
+package.json
+  s_f968892555e89e::t_9a0768b7db9ec7 5
+package-lock.json
+  s_f968892555e89e::t_15fa02420afe8c 3,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6a9a3b965eda70337889f41465acfd80ecd25bea",
+  "prompts": {},
+  "sessions": {
+    "s_f968892555e89e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "271bf723-34e3-48fd-856c-82cf84bceb9e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
