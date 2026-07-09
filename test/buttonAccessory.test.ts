@@ -14,6 +14,8 @@ const BUTTON: ButtonConfig = {
   url: new URL('https://console/hook/abcdef123456'),
   method: 'POST',
   apiKey: 'super-secret-key',
+  requireDoublePress: false,
+  doublePressWindowMs: 3000,
 };
 
 interface Harness {
@@ -200,5 +202,88 @@ describe('ButtonAccessory', () => {
     handler.dispose();
     await vi.advanceTimersByTimeAsync(5000);
     expect(switchService.updateCharacteristic).not.toHaveBeenCalled();
+  });
+});
+
+describe('ButtonAccessory — double-press confirmation', () => {
+  const DOUBLE: ButtonConfig = { ...BUTTON, requireDoublePress: true, doublePressWindowMs: 3000 };
+
+  it('arms without firing on the first press, then bounces the switch off', async () => {
+    const { send, pressOn, readState, switchService, log } = createHarness(DOUBLE);
+
+    pressOn();
+
+    expect(send).not.toHaveBeenCalled();
+    expect(readState()).toBe(true);
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('press again'));
+
+    await vi.advanceTimersByTimeAsync(300);
+    expect(switchService.updateCharacteristic).toHaveBeenCalledWith('On', false);
+    expect(readState()).toBe(false);
+  });
+
+  it('fires exactly once when confirmed within the window', async () => {
+    const { send, pressOn } = createHarness(DOUBLE);
+
+    pressOn();
+    await vi.advanceTimersByTimeAsync(300);
+    pressOn();
+
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('re-arms instead of firing when the second press is too late', async () => {
+    const { send, pressOn, log } = createHarness(DOUBLE);
+
+    pressOn();
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+
+    pressOn();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('disarms on a manual off and never fires', async () => {
+    const { send, pressOn, pressOff, log } = createHarness(DOUBLE);
+
+    pressOn();
+    pressOff();
+
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(send).not.toHaveBeenCalled();
+    expect(log.debug).not.toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+  });
+
+  it('does not log a lapsed window after a confirmed fire', async () => {
+    const { pressOn, resolveSend, log } = createHarness(DOUBLE);
+
+    pressOn();
+    await vi.advanceTimersByTimeAsync(300);
+    pressOn();
+    resolveSend({ ok: true, status: 204, durationMs: 5 });
+    await flush();
+
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(log.debug).not.toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+  });
+
+  it('clears the arm timer on dispose', async () => {
+    const { pressOn, handler, log } = createHarness(DOUBLE);
+
+    pressOn();
+    handler.dispose();
+
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(log.debug).not.toHaveBeenCalledWith(expect.stringContaining('window elapsed'));
+  });
+
+  it('confirms even when the second press arrives before the arm bounce', async () => {
+    const { send, pressOn } = createHarness(DOUBLE);
+
+    pressOn();
+    await vi.advanceTimersByTimeAsync(200);
+    pressOn();
+
+    expect(send).toHaveBeenCalledTimes(1);
   });
 });

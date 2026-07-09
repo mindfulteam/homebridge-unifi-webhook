@@ -93,6 +93,36 @@ describe('validateConfig', () => {
     expect(log.warn).toHaveBeenCalledOnce();
   });
 
+  it('defaults double-press off with a 3s window', () => {
+    const config = validateConfig(asPlatformConfig({ buttons: [{ name: 'A', url: VALID_URL }] }), createLog());
+
+    expect(config.buttons[0]).toMatchObject({ requireDoublePress: false, doublePressWindowMs: 3000 });
+  });
+
+  it('parses and clamps the per-button double-press window', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({
+      buttons: [
+        { name: 'Custom', url: `${VALID_URL}1`, requireDoublePress: true, doublePressWindowSeconds: 10 },
+        { name: 'TooLong', url: `${VALID_URL}2`, requireDoublePress: true, doublePressWindowSeconds: 999 },
+      ],
+    }), log);
+
+    expect(config.buttons[0]).toMatchObject({ requireDoublePress: true, doublePressWindowMs: 10_000 });
+    expect(config.buttons[1]?.doublePressWindowMs).toBe(30_000);
+    expect(log.warn).toHaveBeenCalledOnce();
+  });
+
+  it('falls back when requireDoublePress is not a boolean', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({
+      buttons: [{ name: 'A', url: VALID_URL, requireDoublePress: 'yes' }],
+    }), log);
+
+    expect(config.buttons[0]?.requireDoublePress).toBe(false);
+    expect(log.warn).toHaveBeenCalledOnce();
+  });
+
   it('coerces and clamps numeric settings with warnings', () => {
     const log = createLog();
     const config = validateConfig(asPlatformConfig({

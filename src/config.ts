@@ -6,6 +6,8 @@ export type SensorType = 'contact' | 'motion' | 'occupancy';
 
 export const CONFIG_DEFAULTS = {
   method: 'POST' as HttpMethod,
+  requireDoublePress: false,
+  doublePressWindowSeconds: 3,
   timeoutSeconds: 10,
   resetDelayMs: 1000,
   allowSelfSigned: true,
@@ -18,6 +20,7 @@ export const CONFIG_DEFAULTS = {
 export const TIMEOUT_SECONDS_RANGE = { min: 1, max: 60 } as const;
 export const RESET_DELAY_MS_RANGE = { min: 100, max: 60_000 } as const;
 export const PORT_RANGE = { min: 1, max: 65_535 } as const;
+export const DOUBLE_PRESS_WINDOW_SECONDS_RANGE = { min: 1, max: 30 } as const;
 
 /** Below this length an explicitly configured token is flagged as weak. */
 export const TOKEN_MIN_LENGTH = 16;
@@ -38,6 +41,9 @@ export interface ButtonConfig {
   readonly url: URL | undefined;
   readonly method: HttpMethod;
   readonly apiKey: string | undefined;
+  /** When true, the switch must be turned on twice within `doublePressWindowMs` before the webhook fires. */
+  readonly requireDoublePress: boolean;
+  readonly doublePressWindowMs: number;
 }
 
 /** One fully validated incoming-webhook sensor. */
@@ -254,6 +260,14 @@ function validateButton(entry: unknown, index: number, globalApiKey: string | un
     url,
     method: asMethod(rawEntry.method, name, log),
     apiKey: asTrimmedString(rawEntry.apiKey) ?? globalApiKey,
+    requireDoublePress: asBoolean(rawEntry.requireDoublePress, CONFIG_DEFAULTS.requireDoublePress, `button "${name}" requireDoublePress`, log),
+    doublePressWindowMs: asClampedNumber(
+      rawEntry.doublePressWindowSeconds,
+      CONFIG_DEFAULTS.doublePressWindowSeconds,
+      DOUBLE_PRESS_WINDOW_SECONDS_RANGE,
+      `button "${name}" doublePressWindowSeconds`,
+      log,
+    ) * 1000,
   };
 }
 

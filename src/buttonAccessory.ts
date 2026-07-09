@@ -19,6 +19,15 @@ export interface ButtonAccessoryContext {
 const FAILURE_RESET_DELAY_MS = 300;
 
 /**
+ * A HomeKit Switch is a toggle, so the confirming press of a double-press
+ * button only reads as an "on" write once HAP holds "off" again. The arming
+ * press therefore bounces the switch back off after this delay; it is kept
+ * short so the second press can follow at once, and always sits well under the
+ * (min 1s) confirmation window.
+ */
+const ARM_BOUNCE_MS = 300;
+
+/**
  * One momentary HomeKit switch bound to one webhook. Turning it on fires the
  * webhook and the switch flips back off after the configured reset delay —
  * there is no "off" request, because an alarm trigger cannot be un-fired.
@@ -28,6 +37,8 @@ export class ButtonAccessory {
   private isOn = false;
   private inFlight = false;
   private resetTimer: NodeJS.Timeout | undefined;
+  private armed = false;
+  private armTimer: NodeJS.Timeout | undefined;
 
   constructor(
     private readonly platform: UniFiWebhookPlatform,
@@ -57,16 +68,19 @@ export class ButtonAccessory {
   /** Called on Homebridge shutdown and before the accessory is discarded. */
   dispose(): void {
     this.cancelReset();
+    this.cancelArm();
   }
 
   private handleSet(value: CharacteristicValue): void {
     if (value) {
       this.trigger();
     } else {
-      // Manual off before the reset fired: honor it, skip the pending reset.
-      // An in-flight request is not aborted — the webhook may already have
-      // been delivered, and a HomeKit "off" cannot undo it.
+      // Manual off before the reset fired: honor it, skip the pending reset
+      // and disarm a half-completed double-press. An in-flight request is not
+      // aborted — the webhook may already have been delivered, and a HomeKit
+      // "off" cannot undo it.
       this.cancelReset();
+      this.cancelArm();
       this.isOn = false;
     }
   }
@@ -76,6 +90,11 @@ export class ButtonAccessory {
       this.platform.log.debug(`"${this.button.name}": trigger already in flight — ignoring`);
       return;
     }
+    if (this.button.requireDoublePress && !this.armed) {
+      this.arm();
+      return;
+    }
+    this.cancelArm();
     this.cancelReset();
     this.isOn = true;
 
@@ -142,6 +161,30 @@ export class ButtonAccessory {
       clearTimeout(this.resetTimer);
       this.resetTimer = undefined;
     }
+  }
+
+  private arm(): void {
+    this.armed = true;
+    this.isOn = true;
+    this.platform.log.info(
+      `"${this.button.name}": press again within ${this.button.doublePressWindowMs / 1000}s to fire — double-press confirmation is on`,
+    );
+    this.scheduleReset(ARM_BOUNCE_MS);
+    this.armTimer = setTimeout(() => {
+      this.armTimer = undefined;
+      this.armed = false;
+      this.platform.log.debug(`"${this.button.name}": confirmation window elapsed — webhook not fired`);
+    }, this.button.doublePressWindowMs);
+    // Never keep the process alive just to lapse an unconfirmed arm.
+    this.armTimer.unref();
+  }
+
+  private cancelArm(): void {
+    if (this.armTimer) {
+      clearTimeout(this.armTimer);
+      this.armTimer = undefined;
+    }
+    this.armed = false;
   }
 }
 

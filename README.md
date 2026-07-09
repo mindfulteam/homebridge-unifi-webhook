@@ -19,6 +19,7 @@ Everything is configurable from the Homebridge UI, with zero runtime dependencie
 - **Two-way** — outgoing button switches and incoming sensors, side by side, in one plugin.
 - **Sensors, not switches, for triggers** — HomeKit only lets a *sensor* start an automation, never a plain switch, so incoming webhooks surface as Contact / Motion / Occupancy sensors.
 - **Momentary by design** — a webhook is an event, not a state. Switches and sensors auto-reset after a configurable delay; a button snaps back instantly when a trigger fails so you can see something went wrong.
+- **Double-press safety** — optionally arm a button so it takes two presses within a few seconds to fire, guarding a destructive trigger (a siren, a gate) against an accidental tap. Off by default, per button.
 - **Authenticated incoming webhooks** — each sensor's URL carries an unguessable secret token, with an optional shared-secret header on top.
 - **Zero runtime dependencies** — installs in seconds, nothing to audit but this plugin.
 - **Self-signed friendly** — works with the self-signed certificate every UniFi console serves on the LAN.
@@ -117,6 +118,8 @@ Use the plugin settings screen in the Homebridge UI (recommended), or add the pl
 | `method` | `POST` \| `GET` | `POST` | `POST` for Integration API URLs, `GET` for legacy URLs. |
 | `apiKey` | string | — | Per-button override of the global API key. |
 | `id` | string | — | Optional stable identity anchor — see [Renaming buttons](#renaming-buttons--accessory-identity). |
+| `requireDoublePress` | boolean | `false` | Safety guard: require two presses within the window to fire — see [Double-press confirmation](#double-press-confirmation-safety). Siri, scenes, and automations can only *arm* it. |
+| `doublePressWindowSeconds` | integer | `3` | Seconds allowed between the two presses (1–30). Only applies when `requireDoublePress` is on. |
 
 ## Behavior details
 
@@ -125,6 +128,12 @@ Use the plugin settings screen in the Homebridge UI (recommended), or add the pl
 Turning a switch on fires the webhook once. On success the switch stays on for `resetDelayMs`, then flips off. On failure it snaps off almost immediately and the log explains what went wrong — so a switch that won't stay on is your visual cue to check the logs. Turning a switch off manually never sends anything: an alarm trigger can't be un-fired.
 
 Rapid double-taps while a request is still in flight are coalesced into one trigger. After a cycle completes, pressing again fires again.
+
+### Double-press confirmation (safety)
+
+Set `requireDoublePress: true` on a button to guard it against accidental triggers. The first press *arms* the switch and it immediately flicks back off; press it again within the window (`doublePressWindowSeconds`, default 3) to actually fire the webhook. **Wait for the switch to settle back to off before the second press** — tapping again while it still shows on reads as an "off" and simply cancels the arm. If the second press doesn't arrive in time, the arm lapses and nothing is sent.
+
+Because arming and firing are two separate "on" actions, **Siri, scenes, and Home app automations can only ever arm a double-press button — they cannot fire it.** That is the point: a siren or gate won't trigger just because an automation ran or "Hey Siri" was misheard. If you need a button that automations can fire, leave `requireDoublePress` off (the default).
 
 ### Renaming buttons & accessory identity
 
@@ -207,6 +216,8 @@ Buttons are plain HomeKit switches and sensors are real HomeKit sensors, so ever
 - HomeKit automation *into* UniFi: *When the front door opens after 11 pm → turn on Flash Floodlights.*
 - HomeKit automation *from* UniFi: *When Driveway Motion detects → turn on the porch light.* — a UniFi event driving HomeKit.
 - Scenes: include any button in a scene.
+
+> A button with `requireDoublePress` on is manual-only: Siri, scenes, and automations can *arm* it but never fire it. Leave double-press off for buttons you want to automate.
 
 ## Troubleshooting
 
