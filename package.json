@@ -4,7 +4,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Momentary HomeKit switches that trigger UniFi Protect Alarm Manager webhooks.",
-  "author": "Stefan H.",
+  "author": "Mindful Team",
   "license": "Apache-2.0",
   "homepage": "https://github.com/mindfulteam/homebridge-unifi-webhook#readme",
   "repository": {
