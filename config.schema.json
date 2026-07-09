@@ -156,5 +156,63 @@
         }
       }
     }
-  }
+  },
+  "layout": [
+    "name",
+    {
+      "type": "fieldset",
+      "title": "HomeKit → UniFi · Buttons (outgoing)",
+      "expandable": true,
+      "expanded": true,
+      "items": [
+        {
+          "type": "help",
+          "helpvalue": "<p class='help-block'>Momentary switches that fire a UniFi Alarm Manager webhook when turned on — from Siri, a scene, or an automation.</p>"
+        },
+        "apiKey",
+        {
+          "key": "buttons",
+          "type": "tabarray",
+          "title": "{{ value.name || 'New button' }}",
+          "items": [
+            "buttons[].name",
+            "buttons[].url",
+            "buttons[].method",
+            "buttons[].apiKey",
+            "buttons[].id"
+          ]
+        },
+        "allowSelfSigned",
+        "timeoutSeconds",
+        "resetDelayMs"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "UniFi → HomeKit · Sensors (incoming)",
+      "expandable": true,
+      "expanded": true,
+      "items": [
+        {
+          "type": "help",
+          "helpvalue": "<p class='help-block'>Contact/Motion/Occupancy sensors driven by incoming UniFi webhooks. Use the <strong>Incoming webhook URLs</strong> panel above to generate each sensor's secret and copy its ready-to-paste URL.</p>"
+        },
+        {
+          "key": "sensors",
+          "type": "tabarray",
+          "title": "{{ value.name || 'New sensor' }}",
+          "items": [
+            "sensors[].name",
+            "sensors[].id",
+            "sensors[].sensorType",
+            "sensors[].resetDelayMs",
+            "sensors[].token"
+          ]
+        },
+        "port",
+        "bindHost",
+        "webhookSecret"
+      ]
+    }
+  ]
 }

@@ -48,4 +48,15 @@ export default tseslint.config(
       },
     },
   },
+  {
+    files: ['homebridge-ui/**/*.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        homebridge: 'readonly',
+      },
+    },
+  },
 );
