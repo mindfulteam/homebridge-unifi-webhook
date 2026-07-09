@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-07-08
+## [1.0.1] - 2026-07-08
 
 ### Added
 
@@ -25,5 +25,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full configuration UI (`config.schema.json`) for the Homebridge UI.
 - Secret hygiene: API keys never logged, webhook ids masked in logged URLs.
 
-[Unreleased]: https://github.com/mindfulteam/homebridge-unifi-webhook/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/mindfulteam/homebridge-unifi-webhook/releases/tag/v1.0.0
+[Unreleased]: https://github.com/mindfulteam/homebridge-unifi-webhook/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/mindfulteam/homebridge-unifi-webhook/releases/tag/v1.0.1

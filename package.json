@@ -2,7 +2,7 @@
   "name": "homebridge-unifi-webhook",
   "displayName": "UniFi Webhook",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Momentary HomeKit switches that trigger UniFi Protect Alarm Manager webhooks.",
   "author": "Mindful Team",
   "license": "Apache-2.0",
