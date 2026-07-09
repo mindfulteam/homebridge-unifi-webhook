@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://media.stefanh.co/github/cover.png" alt="homebridge-unifi-webhook — Unifi Protect Webhook Button" width="100%">
+<img src="https://media.stefanh.co/github/cover-2.png" alt="homebridge-unifi-webhook — Unifi Protect Webhook Button" width="100%">
 </p>
 
 # homebridge-unifi-webhook
