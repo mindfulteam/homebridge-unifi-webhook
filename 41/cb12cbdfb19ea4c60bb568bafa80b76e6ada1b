@@ -1,0 +1,48 @@
+README.md
+  s_7ebf6a2a7204a0::t_6668efe65b1467 220-221
+  s_7ebf6a2a7204a0::t_16022eafed601c 121-122
+  s_7ebf6a2a7204a0::t_17e9c320e99790 22
+  s_7ebf6a2a7204a0::t_1b2cbec6e33d04 132-137
+CHANGELOG.md
+  s_7ebf6a2a7204a0::t_8739d4899710b0 8-24
+  s_7ebf6a2a7204a0::t_0afd50dbf88c04 85
+test/buttonAccessory.test.ts
+  s_7ebf6a2a7204a0::t_f78c9a06539812 17-18
+  s_7ebf6a2a7204a0::t_7fc7ba6b4ddefd 207-289
+package.json
+  s_7ebf6a2a7204a0::t_ddb4ca7847611d 5
+config.schema.json
+  s_7ebf6a2a7204a0::t_593e6acd15881d 197-199
+  s_7ebf6a2a7204a0::t_5702e95215dc61 66-79
+src/config.ts
+  s_7ebf6a2a7204a0::t_f461ec4816e03d 23
+  s_7ebf6a2a7204a0::t_97b75603a742ee 44-46
+  s_7ebf6a2a7204a0::t_dd8b9aca08a676 9-10
+  s_7ebf6a2a7204a0::t_16241912e175b0 263-270
+src/buttonAccessory.ts
+  s_7ebf6a2a7204a0::t_bc3f528dbbbe94 40-41
+  s_7ebf6a2a7204a0::t_679dda57f6c65d 78-81,83
+  s_7ebf6a2a7204a0::t_9148660ed04f37 22-29
+  s_7ebf6a2a7204a0::t_d10e11c683fff6 71
+  s_7ebf6a2a7204a0::t_6f4b0d67676674 165-188
+  s_7ebf6a2a7204a0::t_33b00eab4ecd03 93-97
+  s_7ebf6a2a7204a0::t_28722af33f7198 21
+test/config.test.ts
+  s_7ebf6a2a7204a0::t_3b66dffd7b6e9c 96-125
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "41cb12cbdfb19ea4c60bb568bafa80b76e6ada1b",
+  "prompts": {},
+  "sessions": {
+    "s_7ebf6a2a7204a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "71f68642-0f89-414a-b1e1-cd55d16e4041",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
