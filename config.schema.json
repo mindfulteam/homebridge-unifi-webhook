@@ -1,0 +1,92 @@
+{
+  "pluginAlias": "UniFiWebhook",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Momentary HomeKit switches that trigger [UniFi Alarm Manager](https://help.ui.com/hc/en-us/articles/27721287753239) webhooks.\n\n1. In your UniFi console, open **Settings → Control Plane → Integrations** and create an **API key**.\n2. In **Protect → Alarm Manager**, add an alarm, choose **Webhook** as its trigger, and copy the generated webhook URL.\n3. Add a button below and paste that URL.\n\nLegacy `/proxy/protect/api/webhook/<id>` URLs also work — set the method to GET and leave the API key empty.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Platform Name",
+        "type": "string",
+        "default": "UniFi Webhook",
+        "required": true,
+        "description": "The name used for this platform in the Homebridge logs."
+      },
+      "apiKey": {
+        "title": "UniFi API Key",
+        "type": "string",
+        "description": "Sent as the X-API-KEY header with every webhook request. Required for Integration API webhook URLs; can be overridden per button.",
+        "x-schema-form": {
+          "type": "password"
+        }
+      },
+      "buttons": {
+        "title": "Buttons",
+        "type": "array",
+        "items": {
+          "title": "Button",
+          "type": "object",
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string",
+              "required": true,
+              "placeholder": "e.g. Sound Alarm",
+              "description": "The switch name shown in HomeKit. You can rename a button at any time — the accessory (and its automations) survives."
+            },
+            "url": {
+              "title": "Webhook URL",
+              "type": "string",
+              "required": true,
+              "format": "uri",
+              "placeholder": "https://<console-ip>/proxy/protect/integration/v1/alarm-manager/webhook/<id>",
+              "description": "The webhook URL copied from the Alarm Manager trigger."
+            },
+            "method": {
+              "title": "HTTP Method",
+              "type": "string",
+              "default": "POST",
+              "enum": ["POST", "GET"],
+              "description": "POST for Integration API URLs (the default), GET for legacy webhook URLs."
+            },
+            "apiKey": {
+              "title": "API Key Override",
+              "type": "string",
+              "description": "Overrides the global API key for this button only.",
+              "x-schema-form": {
+                "type": "password"
+              }
+            },
+            "id": {
+              "title": "Stable ID (advanced)",
+              "type": "string",
+              "description": "Optional identity anchor. Set it before the first launch if you may rotate the webhook URL later, or if two buttons share one URL. Adding or changing it afterwards re-creates the accessory in HomeKit."
+            }
+          }
+        }
+      },
+      "allowSelfSigned": {
+        "title": "Allow Self-Signed Certificates",
+        "type": "boolean",
+        "default": true,
+        "description": "UniFi consoles serve a self-signed certificate on the LAN. Disable only if your console presents a trusted certificate."
+      },
+      "timeoutSeconds": {
+        "title": "Request Timeout (seconds)",
+        "type": "integer",
+        "default": 10,
+        "minimum": 1,
+        "maximum": 60
+      },
+      "resetDelayMs": {
+        "title": "Switch Reset Delay (milliseconds)",
+        "type": "integer",
+        "default": 1000,
+        "minimum": 100,
+        "maximum": 60000,
+        "description": "How long a switch stays on before flipping back off after a successful trigger."
+      }
+    }
+  }
+}
