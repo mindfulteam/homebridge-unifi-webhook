@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/homebridge/branding/raw/latest/logos/homebridge-wordmark-logo-vertical.png" width="150">
+<img src="https://raw.githubusercontent.com/mindfulteam/homebridge-unifi-webhook/main/assets/icon.png" width="120" alt="homebridge-unifi-webhook icon">
 </p>
 
 # homebridge-unifi-webhook
