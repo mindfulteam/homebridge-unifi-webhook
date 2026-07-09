@@ -1,0 +1,19 @@
+package.json
+  s_e272eb57211273::t_7def84bd0bacd3 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "13f3e205554ba260ab910f15b27dfd67317bf782",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
