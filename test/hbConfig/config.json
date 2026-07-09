@@ -21,7 +21,23 @@
           "method": "GET",
           "id": "siren"
         }
-      ]
+      ],
+      "sensors": [
+        {
+          "name": "Doorbell Pressed",
+          "id": "doorbell",
+          "sensorType": "contact",
+          "token": "dev-doorbell-token-change-me",
+          "resetDelayMs": 5000
+        },
+        {
+          "name": "Motion Detected",
+          "id": "motion",
+          "sensorType": "motion",
+          "token": "dev-motion-token-change-me"
+        }
+      ],
+      "port": 51828
     }
   ]
 }

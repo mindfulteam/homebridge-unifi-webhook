@@ -1,8 +1,9 @@
 import type { PlatformAccessory } from 'homebridge';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { UniFiWebhookPlatform } from '../src/platform.js';
 import { PLUGIN_NAME } from '../src/settings.js';
+import type { WebhookServer } from '../src/webhookServer.js';
 import { asPlatformConfig, createMockLog, FakePlatformAccessory, MockHomebridgeApi } from './mocks/homebridgeApi.js';
 
 const URL_A = 'https://192.168.1.1/proxy/protect/integration/v1/alarm-manager/webhook/aaa111';
@@ -12,6 +13,14 @@ function uuidFor(key: string): string {
   return `uuid:${PLUGIN_NAME}:${key}`;
 }
 
+function sensorUuidFor(key: string): string {
+  return `uuid:${PLUGIN_NAME}:sensor:${key}`;
+}
+
+function fakeServer(): WebhookServer {
+  return { start: vi.fn(), stop: vi.fn(), address: vi.fn(() => undefined) } as unknown as WebhookServer;
+}
+
 describe('UniFiWebhookPlatform', () => {
   let api: MockHomebridgeApi;
 
@@ -19,8 +28,8 @@ describe('UniFiWebhookPlatform', () => {
     api = new MockHomebridgeApi();
   });
 
-  function launch(config: Record<string, unknown>): UniFiWebhookPlatform {
-    const platform = new UniFiWebhookPlatform(createMockLog(), asPlatformConfig(config), api.asApi());
+  function launch(config: Record<string, unknown>, server?: WebhookServer): UniFiWebhookPlatform {
+    const platform = new UniFiWebhookPlatform(createMockLog(), asPlatformConfig(config), api.asApi(), server);
     api.emit('didFinishLaunching');
     return platform;
   }
@@ -125,5 +134,118 @@ describe('UniFiWebhookPlatform', () => {
     expect(platform.shutdownSignal.aborted).toBe(false);
     api.emit('shutdown');
     expect(platform.shutdownSignal.aborted).toBe(true);
+  });
+
+  it('registers one sensor accessory per configured sensor', () => {
+    launch({ sensors: [{ name: 'Doorbell', id: 'doorbell', sensorType: 'contact' }] }, fakeServer());
+
+    expect(api.registerPlatformAccessories).toHaveBeenCalledTimes(1);
+    const accessory = api.registerPlatformAccessories.mock.calls[0]![2][0] as FakePlatformAccessory;
+    expect(accessory.displayName).toBe('Doorbell');
+    expect(accessory.UUID).toBe(sensorUuidFor('doorbell'));
+    expect(accessory.category).toBe(10); // SENSOR
+    expect(accessory.getService('ContactSensor')).toBeDefined();
+    expect(accessory.context).toMatchObject({ key: 'doorbell', sensorType: 'contact', schemaVersion: 1 });
+    expect(typeof (accessory.context as { token?: unknown }).token).toBe('string');
+  });
+
+  it('starts the listener with the sensor routes when sensors exist', () => {
+    const server = fakeServer();
+    launch({ port: 12345, sensors: [{ name: 'Doorbell', id: 'doorbell' }] }, server);
+
+    expect(server.start).toHaveBeenCalledTimes(1);
+    const options = vi.mocked(server.start).mock.calls[0]![0];
+    expect(options.port).toBe(12345);
+    expect(options.host).toBe('0.0.0.0');
+    const accessory = api.registerPlatformAccessories.mock.calls[0]![2][0] as FakePlatformAccessory;
+    const token = (accessory.context as { token: string }).token;
+    expect(options.routes.get(token)).toBeDefined();
+  });
+
+  it('does not start the listener when only buttons are configured', () => {
+    const server = fakeServer();
+    launch({ buttons: [{ name: 'Gate', url: URL_A }] }, server);
+
+    expect(server.start).not.toHaveBeenCalled();
+  });
+
+  it('reuses a persisted auto-generated token across restarts', () => {
+    const cached = new FakePlatformAccessory('Doorbell', sensorUuidFor('doorbell'));
+    cached.context = { key: 'doorbell', token: 'persisted-token', tokenSource: 'auto', sensorType: 'contact', schemaVersion: 1 };
+
+    const server = fakeServer();
+    const platform = new UniFiWebhookPlatform(
+      createMockLog(),
+      asPlatformConfig({ sensors: [{ name: 'Doorbell', id: 'doorbell' }] }),
+      api.asApi(),
+      server,
+    );
+    platform.configureAccessory(cached as unknown as PlatformAccessory);
+    api.emit('didFinishLaunching');
+
+    expect(api.registerPlatformAccessories).not.toHaveBeenCalled();
+    expect(api.updatePlatformAccessories).not.toHaveBeenCalled(); // token unchanged — no disk write
+    const options = vi.mocked(server.start).mock.calls[0]![0];
+    expect(options.routes.get('persisted-token')).toBeDefined();
+  });
+
+  it('mints a fresh token when an explicit token is removed from config', () => {
+    const cached = new FakePlatformAccessory('Doorbell', sensorUuidFor('doorbell'));
+    cached.context = { key: 'doorbell', token: 'old-explicit', tokenSource: 'explicit', sensorType: 'contact', schemaVersion: 1 };
+
+    const server = fakeServer();
+    const platform = new UniFiWebhookPlatform(
+      createMockLog(),
+      asPlatformConfig({ sensors: [{ name: 'Doorbell', id: 'doorbell' }] }), // token removed
+      api.asApi(),
+      server,
+    );
+    platform.configureAccessory(cached as unknown as PlatformAccessory);
+    api.emit('didFinishLaunching');
+
+    const options = vi.mocked(server.start).mock.calls[0]![0];
+    expect(options.routes.get('old-explicit')).toBeUndefined(); // the rotated-out secret no longer works
+    expect(options.routes.size).toBe(1);
+    expect(api.updatePlatformAccessories).toHaveBeenCalled();
+    const newToken = (cached.context as { token: string }).token;
+    expect(newToken).not.toBe('old-explicit');
+    expect(options.routes.get(newToken)).toBeDefined();
+  });
+
+  it('does not collide a sensor with a button that shares the same key', () => {
+    launch({
+      buttons: [{ name: 'Gate', url: URL_A, id: 'shared' }],
+      sensors: [{ name: 'Motion', id: 'shared', sensorType: 'motion' }],
+    }, fakeServer());
+
+    expect(api.registerPlatformAccessories).toHaveBeenCalledTimes(2);
+    const uuids = api.registerPlatformAccessories.mock.calls.map((c) => (c[2][0] as FakePlatformAccessory).UUID);
+    expect(new Set(uuids).size).toBe(2);
+    expect(uuids).toContain(uuidFor('shared'));
+    expect(uuids).toContain(sensorUuidFor('shared'));
+  });
+
+  it('prunes a sensor accessory removed from the config', () => {
+    const stale = new FakePlatformAccessory('Old Sensor', sensorUuidFor('gone'));
+    stale.context = { key: 'gone', token: 't', sensorType: 'contact', schemaVersion: 1 };
+
+    const platform = new UniFiWebhookPlatform(
+      createMockLog(),
+      asPlatformConfig({ sensors: [{ name: 'Keep', id: 'keep' }] }),
+      api.asApi(),
+      fakeServer(),
+    );
+    platform.configureAccessory(stale as unknown as PlatformAccessory);
+    api.emit('didFinishLaunching');
+
+    expect(api.unregisterPlatformAccessories).toHaveBeenCalledWith('homebridge-unifi-webhook', 'UniFiWebhook', [stale]);
+  });
+
+  it('stops the listener on shutdown', () => {
+    const server = fakeServer();
+    launch({ sensors: [{ name: 'Doorbell', id: 'doorbell' }] }, server);
+
+    api.emit('shutdown');
+    expect(server.stop).toHaveBeenCalled();
   });
 });
