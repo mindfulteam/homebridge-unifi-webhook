@@ -1,0 +1,31 @@
+.claude/skills/verify/SKILL.md
+  s_baa2bf2c4aaf3b::t_fb0f0c656d2c68 29
+  s_baa2bf2c4aaf3b::t_5fae991f54de35 19
+  s_baa2bf2c4aaf3b::t_add3a3bbe564a8 49,51-52
+test/uiLib.test.ts
+  s_baa2bf2c4aaf3b::t_84ca1d0a7ea2c0 42-64
+  s_baa2bf2c4aaf3b::t_2772970dc3c630 3
+homebridge-ui/public/lib.d.ts
+  s_baa2bf2c4aaf3b::t_c3a218f79e7ecf 21
+homebridge-ui/public/lib.js
+  s_baa2bf2c4aaf3b::t_dadfabbcd63bc4 27-37
+homebridge-ui/public/ui.js
+  s_baa2bf2c4aaf3b::t_1d3cfd4159074e 276
+  s_baa2bf2c4aaf3b::t_0325f5bd9a3344 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "45406cb69ee02177d93d463b0c01a3e8cddcf450",
+  "prompts": {},
+  "sessions": {
+    "s_baa2bf2c4aaf3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0bb5d4-a1de-43b6-b093-a1bc2fb13f18",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
