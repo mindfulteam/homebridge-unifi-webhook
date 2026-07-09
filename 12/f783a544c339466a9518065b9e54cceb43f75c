@@ -1,0 +1,29 @@
+CHANGELOG.md
+  s_7ebf6a2a7204a0::t_a7a36722589b60 15-19
+test/buttonAccessory.test.ts
+  s_7ebf6a2a7204a0::t_28a47adb480de6 211-212,217-218,221-222,224-225,230-231,234-235,237,240-241,245,247-249,252-253,255-256,258,260,273-274,277-279,281
+config.schema.json
+  s_7ebf6a2a7204a0::t_29ea18a5975973 71
+src/buttonAccessory.ts
+  s_7ebf6a2a7204a0::t_bcd3ba424a60fc 24-26
+  s_7ebf6a2a7204a0::t_5a55d7641dbbb7 185,190-191
+  s_7ebf6a2a7204a0::t_01b5f33155cb29 69,71,75-83,88-93,97-98,100-115
+README.md
+  s_7ebf6a2a7204a0::t_193bcae63ba28f 134,136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "12f783a544c339466a9518065b9e54cceb43f75c",
+  "prompts": {},
+  "sessions": {
+    "s_7ebf6a2a7204a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "71f68642-0f89-414a-b1e1-cd55d16e4041",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
