@@ -1,0 +1,37 @@
+CHANGELOG.md
+  s_f968892555e89e::t_f69b86f4e72dd0 31-36
+eslint.config.js
+  s_f968892555e89e::t_b1a94fec9bebc5 7
+package.json
+  s_f968892555e89e::t_57407ec02b6157 5
+  s_f968892555e89e::t_a4444ca17b58f9 30
+.github/workflows/release.yml
+  s_f968892555e89e::t_603f06d6cb782f 1-47
+config.schema.json
+  s_f968892555e89e::t_54eaece0a639af 159-217
+homebridge-ui/public/index.html
+  s_f968892555e89e::t_b43b133e53618b 1-20
+README.md
+  s_f968892555e89e::t_2472a13171bed3 151,157
+  s_f968892555e89e::t_a673377f397596 253,255-257,259
+homebridge-ui/public/ui.js
+  s_f968892555e89e::t_1eb4f4f1d0594b 1-147
+package-lock.json
+  s_f968892555e89e::t_9d68dca173d2fc 3,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f0ccebb9edd02036e149b3728ebdf89d918be863",
+  "prompts": {},
+  "sessions": {
+    "s_f968892555e89e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "271bf723-34e3-48fd-856c-82cf84bceb9e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
