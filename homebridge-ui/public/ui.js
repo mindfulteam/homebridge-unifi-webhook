@@ -1,6 +1,6 @@
 /* Custom settings UI for homebridge-unifi-webhook. Client-only: uses the
  * window.homebridge API injected by homebridge-config-ui-x. No server, no deps. */
-import { buildUrl, cachedSensorTokens, generateToken, resolveDisplayToken, sensorKey } from './lib.js';
+import { buildUrl, cachedSensorTokens, generateToken, normalizeHost, resolveDisplayToken, sensorKey } from './lib.js';
 
 const PLUGIN = 'homebridge-unifi-webhook';
 const TABS = ['settings', 'webhooks', 'support'];
@@ -273,7 +273,7 @@ for (const tab of TABS) {
 }
 
 els.host.addEventListener('input', () => {
-  hostOverride = els.host.value.trim();
+  hostOverride = normalizeHost(els.host.value);
   draw();
 });
 

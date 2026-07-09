@@ -24,7 +24,17 @@ export function bracketHost(host) {
   if (host.startsWith('[') && host.endsWith(']')) {
     return host;
   }
-  return host.indexOf(':') !== -1 ? '[' + host + ']' : host;
+  return host.indexOf(':') !== host.lastIndexOf(':') ? '[' + host + ']' : host;
+}
+
+export function normalizeHost(input) {
+  const host = typeof input === 'string' ? input.trim() : '';
+  const bracketed = host.match(/^(\[.+\]):\d{1,5}$/);
+  if (bracketed) {
+    return bracketed[1];
+  }
+  const withPort = host.match(/^([^:]+):\d{1,5}$/);
+  return withPort ? withPort[1] : host;
 }
 
 export function buildUrl(host, port, token) {

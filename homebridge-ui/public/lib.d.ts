@@ -18,6 +18,7 @@ export type DisplayTokenResolution =
 
 export function generateToken(): string;
 export function bracketHost(host: string): string;
+export function normalizeHost(input: unknown): string;
 export function buildUrl(host: string, port: unknown, token: string): string;
 export function sensorKey(sensor: SensorLike | undefined): string | undefined;
 export function cachedSensorTokens(accessories: unknown, pluginName?: string): Map<string, CachedTokenEntry>;

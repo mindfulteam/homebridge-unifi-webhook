@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildUrl, cachedSensorTokens, generateToken, resolveDisplayToken, sensorKey } from '../homebridge-ui/public/lib.js';
+import { bracketHost, buildUrl, cachedSensorTokens, generateToken, normalizeHost, resolveDisplayToken, sensorKey } from '../homebridge-ui/public/lib.js';
 import type { CachedTokenEntry } from '../homebridge-ui/public/lib.js';
 
 function mapOf(entries: Record<string, CachedTokenEntry>) {
@@ -36,6 +36,29 @@ describe('buildUrl', () => {
 
   it('percent-encodes tokens like the runtime does', () => {
     expect(buildUrl('host', 51828, 'a/b c')).toBe('http://host:51828/webhook/a%2Fb%20c');
+  });
+});
+
+describe('bracketHost', () => {
+  it('brackets only hosts with two or more colons (real IPv6)', () => {
+    expect(bracketHost('fe80::1')).toBe('[fe80::1]');
+    expect(bracketHost('::1')).toBe('[::1]');
+    expect(bracketHost('192.168.1.10:51828')).toBe('192.168.1.10:51828');
+    expect(bracketHost('my-host')).toBe('my-host');
+  });
+});
+
+describe('normalizeHost', () => {
+  it('strips an accidental trailing port from pasted input', () => {
+    expect(normalizeHost('192.168.1.10:51828')).toBe('192.168.1.10');
+    expect(normalizeHost('[fe80::1]:51828')).toBe('[fe80::1]');
+  });
+
+  it('leaves plain hosts and IPv6 literals alone, trimming whitespace', () => {
+    expect(normalizeHost(' 192.168.1.10 ')).toBe('192.168.1.10');
+    expect(normalizeHost('fe80::1')).toBe('fe80::1');
+    expect(normalizeHost('homebridge.local')).toBe('homebridge.local');
+    expect(normalizeHost(undefined)).toBe('');
   });
 });
 

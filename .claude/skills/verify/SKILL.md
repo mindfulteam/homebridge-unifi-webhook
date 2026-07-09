@@ -16,7 +16,7 @@ npm init -y >/dev/null && npm install homebridge homebridge-config-ui-x /tmp/hom
 Storage `config.json`: bridge block + `{"platform":"config","name":"Config","port":8581,"auth":"none"}` + a `UniFiWebhook` platform with one explicit-token sensor and one id-only sensor (auto token), `"port": 51899`.
 
 ```bash
-(./node_modules/.bin/homebridge -U ./storage > hb.log 2>&1 &)
+./node_modules/.bin/homebridge -U ./storage > hb.log 2>&1 & echo $! > hb.pid
 ```
 
 Expect in `hb.log`: `Adding sensor`, per-sensor `paste into the UniFi Alarm Manager webhook action: http://…/webhook/<token>`, `Webhook listener ready`. Drive: `curl` the logged URLs (→ 200 + "webhook received" log), wrong token → 404, DELETE → 405. Auto tokens persist in `storage/accessories/cachedAccessories` (`context.key/token/tokenSource`).
@@ -26,7 +26,7 @@ Expect in `hb.log`: `Adding sensor`, per-sensor `paste into the UniFi Alarm Mana
 **Gotcha:** config-ui-x v5 does NOT serve the web UI when homebridge loads it as a platform — start it separately:
 
 ```bash
-(node node_modules/homebridge-config-ui-x/dist/bin/standalone.js -U ./storage -P ./node_modules > uix.log 2>&1 &)
+node node_modules/homebridge-config-ui-x/dist/bin/standalone.js -U ./storage -P ./node_modules > uix.log 2>&1 & echo $! > uix.pid
 ```
 
 First run needs the setup wizard even with `"auth":"none"` (noauth 500s otherwise):
@@ -46,6 +46,7 @@ API checks: `/api/plugins` (displayName/version), `/api/plugins/config-schema/ho
 ## Cleanup
 
 ```bash
-lsof -nP -iTCP:8581 -iTCP:51899 -iTCP:51999 -sTCP:LISTEN -t | xargs kill
+kill $(cat /tmp/uw-verify/hb.pid /tmp/uw-verify/uix.pid) 2>/dev/null
 ```
-(pkill by `/tmp/uw-verify` misses them — argv uses relative paths.)
+
+The pid files survive across shell invocations; kill from them, not by port — port-based kills can hit an unrelated local Config UI X on 8581. If the pid files are lost, fall back to `lsof -nP -iTCP:51899 -iTCP:51999 -sTCP:LISTEN -t | xargs kill` (scratch-only ports) and handle 8581 manually. (pkill by `/tmp/uw-verify` misses these processes — their argv uses relative paths.)
