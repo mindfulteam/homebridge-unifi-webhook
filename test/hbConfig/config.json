@@ -1,0 +1,27 @@
+{
+  "bridge": {
+    "name": "Homebridge UniFi Webhook Dev",
+    "username": "0E:B7:2F:11:22:33",
+    "port": 51826,
+    "pin": "031-45-154"
+  },
+  "platforms": [
+    {
+      "platform": "UniFiWebhook",
+      "name": "UniFi Webhook",
+      "apiKey": "dev-test-key",
+      "buttons": [
+        {
+          "name": "Front Gate Alarm",
+          "url": "http://127.0.0.1:8580/hook/front-gate"
+        },
+        {
+          "name": "Siren",
+          "url": "http://127.0.0.1:8580/hook/siren",
+          "method": "GET",
+          "id": "siren"
+        }
+      ]
+    }
+  ]
+}

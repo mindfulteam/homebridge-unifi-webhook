@@ -1,0 +1,45 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly.
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Homebridge log
+      description: Relevant log lines, ideally with debug mode (-D) enabled. API keys are never logged by this plugin, but double-check before pasting.
+      render: text
+  - type: textarea
+    id: config
+    attributes:
+      label: Plugin config
+      description: The UniFiWebhook platform block from your config.json. Replace API keys and webhook ids with placeholders.
+      render: json
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+    validations:
+      required: true
+  - type: input
+    id: homebridge-version
+    attributes:
+      label: Homebridge version
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+    validations:
+      required: true
+  - type: input
+    id: protect-version
+    attributes:
+      label: UniFi Protect / UniFi OS version

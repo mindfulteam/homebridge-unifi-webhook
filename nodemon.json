@@ -1,0 +1,11 @@
+{
+  "watch": ["src", "config.schema.json"],
+  "ext": "ts,json",
+  "ignore": ["test/**", "dist/**"],
+  "exec": "npm run build && homebridge -U ./test/hbConfig -P . -D",
+  "signal": "SIGTERM",
+  "delay": 1000,
+  "env": {
+    "NODE_OPTIONS": "--trace-warnings"
+  }
+}
