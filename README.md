@@ -252,9 +252,12 @@ node scripts/fire-webhook.mjs --token dev-doorbell-token-change-me   # incoming:
 
 Versions follow [SemVer](https://semver.org). Releasing is two manual steps — nothing runs on merge — and tokenless:
 
-1. **Bump + changelog on `main`.** `npm version patch|minor|major` (or `npm run version:beta` for `X.Y.Z-beta.N`; for the first beta of a new line, `npm version preminor --preid=beta`), and record the changes under the top section of the [CHANGELOG](CHANGELOG.md).
-2. **Create the release** — **Actions → Release → Run workflow**. It reads `package.json` and, if no release exists for that version, creates the GitHub release using the top CHANGELOG section as the notes, marked *pre-release* for `-beta` versions.
-3. **Publish to npm** — **Actions → Publish to npm → Run workflow**. It authenticates over OIDC ([trusted publishing](https://docs.npmjs.com/trusted-publishers)) with provenance and picks the npm [dist-tag](https://docs.npmjs.com/adding-dist-tags-to-packages) from the version: a plain version → `latest`, a `-beta.N` → `beta`. So a beta can never land on `latest`.
+1. **Bump + changelog on `main`.** `npm version patch|minor|major` (or `npm run version:beta` for `X.Y.Z-beta.N`; for the first beta of a new line, `npm version preminor --preid=beta`), and record the changes in a `## [X.Y.Z]` section at the top of the [CHANGELOG](CHANGELOG.md).
+2. **Release** — **Actions → Release & publish → Run workflow**. One run does both halves, each skipped if already done, so a partly-failed run can simply be re-run:
+   - **npm publish** over OIDC ([trusted publishing](https://docs.npmjs.com/trusted-publishers)) with provenance, gated by `prepublishOnly` (lint + typecheck + build + test). The npm [dist-tag](https://docs.npmjs.com/adding-dist-tags-to-packages) comes from the version — plain → `latest`, `-beta.N` → `beta` — so a beta can never land on `latest`.
+   - **GitHub release** (only after npm has the version): tag `vX.Y.Z` at the built commit, with the matching CHANGELOG section as notes (generated notes if that section doesn't exist), marked *pre-release* for `-` versions.
+
+The workflow file must stay named `publish.yml` — npm's trusted publisher binds to the workflow filename.
 
 Testers install a beta with `npm install -g homebridge-unifi-webhook@beta` (or enable *pre-release versions* on the plugin in the Homebridge UI). When a beta is solid, bump the matching stable version to move `latest` forward.
 

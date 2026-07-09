@@ -1,16 +1,31 @@
-name: Publish to npm
+name: Release & publish
+
+# The npm trusted publisher (npmjs.com package settings) binds to this exact
+# filename — renaming publish.yml breaks publishing until that setting is updated.
+# Order is npm-first (irreversible, gated by prepublishOnly), GitHub release last;
+# each half skips work that's already done, so a partly-failed run is safe to re-run.
 
 on:
-  # Manual only — run "Publish to npm" from the Actions tab when you want to publish.
+  # Manual only — run "Release & publish" from the Actions tab to ship the version in package.json.
   workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false # queue a second dispatch, never kill a mid-publish run
 
 jobs:
   publish:
+    name: Publish to npm
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       id-token: write # OIDC — npm trusted publishing + provenance
-
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      prerelease: ${{ steps.meta.outputs.prerelease }}
     steps:
       - uses: actions/checkout@v5
 
@@ -19,31 +34,100 @@ jobs:
           node-version: 22.x
           registry-url: https://registry.npmjs.org
 
-      # npm >= 11.5.1 for trusted publishing; pin 11.x (npm 12.0.0 drops bundled sigstore — npm/cli#9722).
-      - name: Update npm
-        run: npm install -g npm@11
-
-      - name: Install dependencies
-        run: npm ci
-
       # Derive the dist-tag from the version. A pre-release (e.g. 1.1.0-beta.1)
       # publishes under its pre-id tag ("beta"); a stable version under "latest".
       # This is what stops a -beta build from ever landing on the `latest` tag —
       # a plain `npm publish` would, because 1.1.0-beta.1 > the current 1.0.x.
-      - name: Determine npm dist-tag
-        id: tag
+      # The registry probe needs `|| true`: an unpublished version E404s with
+      # exit 1 on npm >= 9, and that's the normal release path, not an error.
+      - name: Determine version, dist-tag, and registry state
+        id: meta
         run: |
+          PKG="$(node -p "require('./package.json').name")"
           VERSION="$(node -p "require('./package.json').version")"
           if [[ "$VERSION" == *-* ]]; then
             PREID="${VERSION#*-}"   # 1.1.0-beta.1 -> beta.1
             TAG="${PREID%%.*}"      # beta.1       -> beta
+            PRERELEASE=true
           else
             TAG="latest"
+            PRERELEASE=false
           fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Publishing $VERSION under dist-tag '$TAG'"
+          PUBLISHED="$(npm view "$PKG@$VERSION" version 2>/dev/null || true)"
+          if [ -n "$PUBLISHED" ]; then
+            EXISTS=true
+            echo "$PKG@$VERSION is already on npm — skipping publish."
+          else
+            EXISTS=false
+            echo "Publishing $VERSION under dist-tag '$TAG'"
+          fi
+          {
+            echo "version=$VERSION"
+            echo "tag=$TAG"
+            echo "prerelease=$PRERELEASE"
+            echo "exists=$EXISTS"
+          } >> "$GITHUB_OUTPUT"
+
+      # Skips are step-level on purpose: a job-level `if` would cascade-skip the
+      # release job through `needs`, breaking the publish-done/release-missing rerun.
+      # npm >= 11.5.1 for trusted publishing; pin 11.x (npm 12.0.0 drops bundled sigstore — npm/cli#9722).
+      - name: Update npm
+        if: steps.meta.outputs.exists == 'false'
+        run: npm install -g npm@11
+
+      - name: Install dependencies
+        if: steps.meta.outputs.exists == 'false'
+        run: npm ci
 
       # prepublishOnly runs lint + typecheck + build + test.
       # Auth comes from the npm Trusted Publisher (OIDC) — no token secret.
       - name: Publish
-        run: npm publish --tag "${{ steps.tag.outputs.tag }}"
+        if: steps.meta.outputs.exists == 'false'
+        run: npm publish --tag "${{ steps.meta.outputs.tag }}"
+
+  release:
+    name: GitHub release
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # This job holds the only write token and runs no package scripts (no npm ci),
+    # so third-party code never executes with contents: write.
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION: ${{ needs.publish.outputs.version }}
+      PRERELEASE: ${{ needs.publish.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check for an existing release
+        id: guard
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v$VERSION already exists — nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Notes are the CHANGELOG section matching this exact version — not the top
+      # section, which would ship the previous stable's notes for a beta without
+      # one — falling back to generated notes. The third awk pattern stops before
+      # the trailing link-reference block when the matched section is the last.
+      - name: Create release with the matching CHANGELOG section as notes
+        if: steps.guard.outputs.exists == 'false'
+        run: |
+          awk -v ver="$VERSION" '
+            index($0, "## [" ver "]") == 1 { f = 1; next }
+            /^## \[/       { f = 0 }
+            /^\[[^]]*\]: / { f = 0 }
+            f
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          PREFLAG=""
+          case "$PRERELEASE" in true) PREFLAG="--prerelease" ;; esac
+          if [ -s RELEASE_NOTES.md ]; then
+            gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" $PREFLAG --notes-file RELEASE_NOTES.md
+          else
+            gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" $PREFLAG --generate-notes
+          fi
