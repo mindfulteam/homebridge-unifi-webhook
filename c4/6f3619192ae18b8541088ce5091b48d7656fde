@@ -1,0 +1,25 @@
+package.json
+  s_baa2bf2c4aaf3b::t_6746a11534ca0f 9,12,15
+README.md
+  s_baa2bf2c4aaf3b::t_6746a11534ca0f 9,240-241
+homebridge-ui/public/index.html
+  s_baa2bf2c4aaf3b::t_6746a11534ca0f 48-52
+CHANGELOG.md
+  s_baa2bf2c4aaf3b::t_6746a11534ca0f 68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c46f3619192ae18b8541088ce5091b48d7656fde",
+  "prompts": {},
+  "sessions": {
+    "s_baa2bf2c4aaf3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0bb5d4-a1de-43b6-b093-a1bc2fb13f18",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
