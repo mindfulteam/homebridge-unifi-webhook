@@ -1,0 +1,19 @@
+README.md
+  s_e272eb57211273::t_d985954913244a 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8d753441f9bad19f9ff844cd7eb2fa5f558bd030",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
