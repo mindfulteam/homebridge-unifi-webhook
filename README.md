@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://media.stefanh.co/github/cover.png" alt="homebridge-unifi-webhook — Unifi Protect Webhook Button" width="100%">
+<img src="https://media.stefanh.co/github/cover.png" alt="homebridge-unifi-webhook — UniFi Protect Webhook" width="100%">
 </p>
 
 # homebridge-unifi-webhook
@@ -34,7 +34,7 @@ Everything is configurable from the Homebridge UI, with zero runtime dependencie
 
 ## Installation
 
-Search for **UniFi Webhook** on the *Plugins* page of the [Homebridge UI](https://github.com/homebridge/homebridge-config-ui-x) and click *Install* — then configure it right from the plugin settings.
+Search for **UniFi Protect Webhook** on the *Plugins* page of the [Homebridge UI](https://github.com/homebridge/homebridge-config-ui-x) and click *Install* — then configure it right from the plugin settings.
 
 Or from a terminal:
 
@@ -75,7 +75,7 @@ Use the plugin settings screen in the Homebridge UI (recommended), or add the pl
   "platforms": [
     {
       "platform": "UniFiWebhook",
-      "name": "UniFi Webhook",
+      "name": "UniFi Protect Webhook",
       "apiKey": "your-unifi-api-key",
       "buttons": [
         {
@@ -97,7 +97,7 @@ Use the plugin settings screen in the Homebridge UI (recommended), or add the pl
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `platform` | string | — | Must be `UniFiWebhook`. |
-| `name` | string | `UniFi Webhook` | Platform name used in the Homebridge logs. |
+| `name` | string | `UniFi Protect Webhook` | Platform name used in the Homebridge logs. |
 | `apiKey` | string | — | Sent as the `X-API-KEY` header with every request. Required for Integration API URLs. |
 | `buttons` | array | `[]` | Outgoing button switches — see [Button options](#button-options). |
 | `sensors` | array | `[]` | Incoming-webhook sensors — see [Sensors](#sensors-trigger-homekit-from-unifi). |
@@ -148,7 +148,7 @@ Point a UniFi Alarm Manager **webhook action** at this plugin and it flips a Hom
 ### Add a sensor
 
 1. Add a sensor in the plugin settings: give it a **name** and a stable **ID** (e.g. `doorbell`), and pick a **sensor type** (contact is the default).
-2. Get the sensor's webhook URL. In the plugin settings, the **Incoming webhook URLs** panel shows each sensor's ready-to-paste URL with a **Copy** button — click **Generate secret** first for any sensor that doesn't have one yet. (It's also printed in the Homebridge log at startup.)
+2. Get the sensor's webhook URL. In the plugin settings, open the **Webhooks** tab — it shows each sensor's ready-to-paste URL with a **Copy** button, including auto-generated secrets once the sensor has started. Click **Generate secret** for any sensor that doesn't have one yet, and adjust the **Host** field if the guessed address isn't reachable from your console. (The URL is also printed in the Homebridge log at startup.)
 
    ```text
    Sensor "Doorbell Pressed" (contact) — paste into the UniFi Alarm Manager webhook action: http://192.168.1.50:51828/webhook/Xy…long-secret…
@@ -168,7 +168,7 @@ When the alarm fires, the sensor flips to *detected* and your HomeKit automation
   "platforms": [
     {
       "platform": "UniFiWebhook",
-      "name": "UniFi Webhook",
+      "name": "UniFi Protect Webhook",
       "port": 51828,
       "sensors": [
         { "name": "Doorbell Pressed", "id": "doorbell", "sensorType": "contact" },
@@ -219,8 +219,8 @@ Buttons are plain HomeKit switches and sensors are real HomeKit sensors, so ever
 | Timeouts | Wrong console IP, VLAN/firewall in the way, or the console is down. |
 | A button disappeared from HomeKit | Its config entry was removed or its `url`/`id` (= identity) changed. See [identity](#renaming-buttons--accessory-identity). |
 | Renamed in the Home app, name came back | Names set in the plugin config win on restart. Rename in the plugin settings instead. |
-| Sensor never triggers | The console can't reach the listener — check the `port` is open on the Homebridge host and reachable from UniFi, and that the pasted URL matches the one printed in the log. |
-| `Rejected webhook (404)` in the log | Wrong or rotated token in the URL — re-copy the sensor URL printed at startup. |
+| Sensor never triggers | The console can't reach the listener — check the `port` is open on the Homebridge host and reachable from UniFi, and that the pasted URL matches the one in the settings **Webhooks** tab (or the startup log). |
+| `Rejected webhook (404)` in the log | Wrong or rotated token in the URL — re-copy the sensor URL from the settings **Webhooks** tab (or the startup log). |
 | `Rejected webhook (401)` in the log | A `webhookSecret` is set but the UniFi custom header is missing or wrong. |
 | `port … already in use` in the log | Another service owns that port — change `port` in the plugin settings. |
 
@@ -231,7 +231,7 @@ Buttons are plain HomeKit switches and sensors are real HomeKit sensors, so ever
 - `allowSelfSigned` (default on) skips TLS certificate verification for outgoing button requests. That is the pragmatic reality of talking to a UniFi console by IP on your LAN; disable it if you've set up a trusted certificate.
 - **Incoming webhooks are authenticated** by an unguessable per-sensor token (~192-bit) in the URL, optionally plus a shared-secret header compared in constant time. Unknown tokens get a flat `404`, bad secrets a `401`.
 - The listener is a **plain-HTTP LAN service** — keep it on a trusted network and never port-forward it to the internet. The token is the credential; treat each sensor URL like a password.
-- Each sensor's full URL is printed **once at startup** so you can copy it into UniFi; every per-request log line masks it. This is the single, intentional exception to "secrets never hit the logs".
+- Each sensor's full URL is printed **once at startup** (and shown in the settings **Webhooks** tab) so you can copy it into UniFi; every per-request log line masks it. This is the single, intentional exception to "secrets never hit the logs".
 - No analytics, no tracking, no network calls other than the webhooks you configure.
 
 ## Development

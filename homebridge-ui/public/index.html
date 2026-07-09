@@ -1,20 +1,56 @@
 <style>
-  #uw-webhook-urls { margin-bottom: 1rem; }
-  #uw-webhook-urls .uw-sensor { padding: 0.5rem 0; border-top: 1px solid rgba(128, 128, 128, 0.2); }
-  #uw-webhook-urls .uw-sensor:first-child { border-top: 0; }
-  #uw-webhook-urls .uw-name { font-weight: 600; margin-bottom: 0.25rem; }
-  #uw-webhook-urls .uw-url-row { display: flex; gap: 0.5rem; align-items: center; }
-  #uw-webhook-urls .uw-url { flex: 1; word-break: break-all; padding: 0.2rem 0.4rem; }
-  #uw-webhook-urls .uw-hint { color: #888; font-size: 0.85rem; }
-  #uw-webhook-urls .uw-sensor .uw-hint { margin-left: 0.5rem; }
+  #uw-cover { text-align: center; margin-bottom: 1rem; }
+  #uw-cover img { width: 100%; max-width: 420px; }
+  #uw-tabs { margin-bottom: 1rem; }
+  .uw-hint { color: #888; font-size: 0.85rem; }
+  .uw-sensor { padding: 0.5rem 0; border-top: 1px solid rgba(128, 128, 128, 0.2); }
+  .uw-sensor:first-child { border-top: 0; }
+  .uw-name { font-weight: 600; margin-bottom: 0.25rem; }
+  .uw-name .badge { margin-left: 0.5rem; font-weight: 500; }
+  .uw-url-row { display: flex; gap: 0.5rem; align-items: center; }
+  .uw-url { flex: 1; word-break: break-all; padding: 0.2rem 0.4rem; }
+  .uw-sensor .uw-hint { margin-left: 0.5rem; }
+  #uw-host-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+  #uw-host { max-width: 14rem; }
 </style>
 
-<div id="uw-webhook-urls" class="card card-body">
+<div id="uw-cover">
+  <img id="uw-cover-img" src="https://media.stefanh.co/github/cover.png" alt="UniFi Protect Webhook">
+</div>
+
+<div id="uw-tabs" class="text-center">
+  <div class="btn-group" role="group" aria-label="Plugin settings sections">
+    <button type="button" id="uw-tab-settings" class="btn btn-primary" aria-pressed="true">Settings</button>
+    <button type="button" id="uw-tab-webhooks" class="btn btn-secondary" aria-pressed="false">Webhooks</button>
+    <button type="button" id="uw-tab-support" class="btn btn-secondary" aria-pressed="false">Support</button>
+  </div>
+</div>
+
+<div id="uw-panel-webhooks" class="card card-body d-none">
   <h5 class="mb-1">Incoming webhook URLs</h5>
   <p class="uw-hint mb-2">
-    Paste a sensor's URL into its UniFi Alarm Manager <em>Webhook</em> action. The host is guessed from this page's address — swap it for a console-reachable IP if needed.
+    Paste a sensor's URL into its UniFi Alarm Manager <em>Webhook</em> action.
   </p>
+  <div id="uw-host-row">
+    <label class="mb-0" for="uw-host">Host</label>
+    <input id="uw-host" class="form-control form-control-sm" placeholder="e.g. 192.168.1.50">
+    <span class="uw-hint">Use an address your UniFi console can reach — not saved.</span>
+  </div>
+  <div id="uw-secret-note" class="uw-hint mb-2 d-none">
+    This config also requires the shared-secret header (<code>Authorization: Bearer …</code> or <code>X-Webhook-Token: …</code>) on every UniFi webhook action.
+  </div>
   <div id="uw-list"></div>
 </div>
 
-<script src="ui.js"></script>
+<div id="uw-panel-support" class="card card-body d-none">
+  <h5 class="mb-1">Support</h5>
+  <ul class="mb-0">
+    <li><a href="https://github.com/mindfulteam/homebridge-unifi-webhook#readme" target="_blank" rel="noopener">Documentation (README)</a></li>
+    <li><a href="https://github.com/mindfulteam/homebridge-unifi-webhook#sensors-trigger-homekit-from-unifi" target="_blank" rel="noopener">Sensors guide — UniFi → HomeKit</a></li>
+    <li><a href="https://github.com/mindfulteam/homebridge-unifi-webhook#troubleshooting" target="_blank" rel="noopener">Troubleshooting</a></li>
+    <li><a href="https://github.com/mindfulteam/homebridge-unifi-webhook/issues" target="_blank" rel="noopener">Report an issue</a></li>
+    <li><a href="https://github.com/mindfulteam/homebridge-unifi-webhook/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+  </ul>
+</div>
+
+<script type="module" src="ui.js"></script>

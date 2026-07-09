@@ -5,10 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-Now available as a pre-release for testing — install with
-`npm install -g homebridge-unifi-webhook@beta`. These changes ship as stable in 1.1.0.
+## [1.1.0] - 2026-07-09
 
 ### Added
 
@@ -27,9 +24,24 @@ Now available as a pre-release for testing — install with
   model; per-sensor `sensorType` and `resetDelayMs`.
 - Request hardening on the listener: GET/POST only, 64 KiB body cap, request
   timeouts, and graceful handling of `EADDRINUSE`/`EACCES` (Homebridge stays up).
-- **Settings UI.** The plugin settings are grouped into outgoing (Buttons) and
-  incoming (Sensors) sections, and a custom panel generates a sensor's secret and
-  shows its ready-to-paste webhook URL with a copy button — no digging in the logs.
+- **Settings UI.** Plugin settings open in a custom panel with **Settings**,
+  **Webhooks**, and **Support** tabs (plus cover art). The Webhooks tab shows
+  every sensor's ready-to-paste webhook URL — including auto-generated secrets
+  once the sensor has started — with copy and generate buttons and an editable
+  host, so nothing needs digging out of the logs. Settings stay grouped into
+  outgoing (Buttons) and incoming (Sensors) sections.
+
+### Changed
+
+- The plugin's display name is now **UniFi Protect Webhook**. The npm package
+  (`homebridge-unifi-webhook`) and the `"platform": "UniFiWebhook"` config value
+  are unchanged — no action needed.
+
+### Fixed
+
+- During the 1.1.0 betas the custom settings panel never appeared: the schema
+  didn't declare the custom UI, so the Homebridge UI showed only the plain
+  settings form. The panel now opens as intended.
 
 ### Notes
 
@@ -53,5 +65,5 @@ Now available as a pre-release for testing — install with
 - Full configuration UI (`config.schema.json`) for the Homebridge UI.
 - Secret hygiene: API keys never logged, webhook ids masked in logged URLs.
 
-[Unreleased]: https://github.com/mindfulteam/homebridge-unifi-webhook/compare/v1.0.1...HEAD
+[1.1.0]: https://github.com/mindfulteam/homebridge-unifi-webhook/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/mindfulteam/homebridge-unifi-webhook/releases/tag/v1.0.1
