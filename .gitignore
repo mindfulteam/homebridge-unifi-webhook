@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+*.log
+.DS_Store
+
+# Homebridge runtime artifacts from the local dev instance (`npm run watch`)
+test/hbConfig/*
+!test/hbConfig/config.json
