@@ -23,6 +23,9 @@
 
   function hostForUrl() {
     const host = window.location.hostname || '<homebridge-ip>';
+    if (host.startsWith('[') && host.endsWith(']')) {
+      return host;
+    }
     return host.indexOf(':') !== -1 ? '[' + host + ']' : host;
   }
 

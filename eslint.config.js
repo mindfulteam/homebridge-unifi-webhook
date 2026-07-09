@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'coverage/**', 'homebridge-ui/**'],
+    ignores: ['dist/**', 'coverage/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -45,6 +45,17 @@ export default tseslint.config(
         process: 'readonly',
         console: 'readonly',
         setTimeout: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['homebridge-ui/**/*.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        homebridge: 'readonly',
       },
     },
   },
