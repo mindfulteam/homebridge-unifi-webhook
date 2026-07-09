@@ -43,6 +43,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "watch": "nodemon",
+    "deploy:pi": "bash scripts/deploy-pi.sh",
     "prepublishOnly": "npm run lint && npm run typecheck && npm run build && npm run test"
   },
   "devDependencies": {
