@@ -14,7 +14,14 @@ export const PLUGIN_NAME = 'homebridge-unifi-webhook';
 const nodeRequire = createRequire(import.meta.url);
 
 /**
- * Plugin version surfaced as the accessories' FirmwareRevision. Resolved from
- * package.json at runtime so it can never drift from the published version.
+ * Plugin version resolved from package.json at runtime so it can never drift
+ * from the published version. Carries any pre-release suffix (e.g. `-beta.1`).
  */
 export const PLUGIN_VERSION: string = (nodeRequire('../package.json') as { version: string }).version;
+
+/**
+ * The value used for the accessories' FirmwareRevision. HomeKit only accepts a
+ * plain dotted-numeric version there, so a pre-release suffix like `-beta.1` is
+ * stripped — otherwise HAP rejects it and a beta build can fail to pair.
+ */
+export const FIRMWARE_REVISION: string = PLUGIN_VERSION.replace(/[-+].*$/, '') || '0.0.0';

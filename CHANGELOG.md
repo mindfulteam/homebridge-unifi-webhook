@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Now available as a pre-release for testing — install with
+`npm install -g homebridge-unifi-webhook@beta`. These changes ship as stable in 1.1.0.
+
+### Added
+
+- **Incoming webhook sensors (UniFi → HomeKit).** A new `sensors` array exposes
+  Contact, Motion, or Occupancy sensors that flip to "detected" when the UniFi
+  Protect Alarm Manager posts to the plugin, then auto-reset — so Home app
+  automations can react to UniFi events (a plain switch cannot be an automation
+  trigger, a sensor can).
+- Built-in zero-dependency HTTP listener (configurable `port`, default `51828`;
+  optional `bindHost`), started only when at least one sensor is configured.
+- Per-sensor authentication: a high-entropy secret token in the webhook URL path
+  — auto-generated and persisted (the ready-to-paste URL is printed once at
+  startup), or set explicitly. Optional shared-secret header (`Authorization:
+  Bearer …` or `X-Webhook-Token: …`) as a second factor, compared in constant time.
+- Rename-safe sensor identity (`id`, otherwise the token), matching the button
+  model; per-sensor `sensorType` and `resetDelayMs`.
+- Request hardening on the listener: GET/POST only, 64 KiB body cap, request
+  timeouts, and graceful handling of `EADDRINUSE`/`EACCES` (Homebridge stays up).
+- `scripts/fire-webhook.mjs` dev helper to post a UniFi-shaped payload at the listener.
+
+### Notes
+
+- Fully backward compatible — existing `buttons` behavior is unchanged.
+
 ## [1.0.1] - 2026-07-08
 
 ### Added

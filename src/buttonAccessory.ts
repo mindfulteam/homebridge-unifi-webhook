@@ -4,7 +4,7 @@ import type { ButtonConfig } from './config.js';
 import type { UniFiWebhookPlatform } from './platform.js';
 import type { WebhookResult } from './webhookClient.js';
 import { redactUrl } from './redact.js';
-import { PLUGIN_VERSION } from './settings.js';
+import { FIRMWARE_REVISION } from './settings.js';
 
 export interface ButtonAccessoryContext {
   key: string;
@@ -41,7 +41,7 @@ export class ButtonAccessory {
       .setCharacteristic(Characteristic.Manufacturer, 'homebridge-unifi-webhook')
       .setCharacteristic(Characteristic.Model, 'UniFi Protect Webhook Button')
       .setCharacteristic(Characteristic.SerialNumber, accessory.UUID.replace(/-/g, '').slice(0, 12).toUpperCase())
-      .setCharacteristic(Characteristic.FirmwareRevision, PLUGIN_VERSION);
+      .setCharacteristic(Characteristic.FirmwareRevision, FIRMWARE_REVISION);
 
     this.service = accessory.getService(Service.Switch) ?? accessory.addService(Service.Switch);
     this.service.setCharacteristic(Characteristic.Name, button.name);

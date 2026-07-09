@@ -5,7 +5,7 @@ import { ButtonAccessory, type ButtonAccessoryContext } from '../src/buttonAcces
 import type { ButtonConfig } from '../src/config.js';
 import type { UniFiWebhookPlatform } from '../src/platform.js';
 import type { WebhookRequestSpec, WebhookResult } from '../src/webhookClient.js';
-import { PLUGIN_VERSION } from '../src/settings.js';
+import { FIRMWARE_REVISION } from '../src/settings.js';
 import { CHARACTERISTIC_TOKENS, createMockLog, FakePlatformAccessory, SERVICE_TOKENS } from './mocks/homebridgeApi.js';
 
 const BUTTON: ButtonConfig = {
@@ -81,7 +81,7 @@ describe('ButtonAccessory', () => {
 
     expect(info.setCharacteristic).toHaveBeenCalledWith('Manufacturer', 'homebridge-unifi-webhook');
     expect(info.setCharacteristic).toHaveBeenCalledWith('Model', 'UniFi Protect Webhook Button');
-    expect(info.setCharacteristic).toHaveBeenCalledWith('FirmwareRevision', PLUGIN_VERSION);
+    expect(info.setCharacteristic).toHaveBeenCalledWith('FirmwareRevision', FIRMWARE_REVISION);
   });
 
   it('fires the webhook with the full request spec when switched on', () => {

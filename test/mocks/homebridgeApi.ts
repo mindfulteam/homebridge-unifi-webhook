@@ -6,6 +6,9 @@ import { vi } from 'vitest';
 export const SERVICE_TOKENS = {
   Switch: 'Switch',
   AccessoryInformation: 'AccessoryInformation',
+  ContactSensor: 'ContactSensor',
+  MotionSensor: 'MotionSensor',
+  OccupancySensor: 'OccupancySensor',
 } as const;
 
 export const CHARACTERISTIC_TOKENS = {
@@ -15,6 +18,10 @@ export const CHARACTERISTIC_TOKENS = {
   Model: 'Model',
   SerialNumber: 'SerialNumber',
   FirmwareRevision: 'FirmwareRevision',
+  ContactSensorState: 'ContactSensorState',
+  MotionDetected: 'MotionDetected',
+  OccupancyDetected: 'OccupancyDetected',
+  StatusActive: 'StatusActive',
 } as const;
 
 export class FakeCharacteristic {
@@ -71,6 +78,10 @@ export class FakePlatformAccessory extends EventEmitter {
     return service;
   }
 
+  removeService(service: FakeService): void {
+    this.services.delete(service.type);
+  }
+
   updateDisplayName(name: string): void {
     this.displayName = name;
   }
@@ -86,7 +97,7 @@ export class MockHomebridgeApi extends EventEmitter {
   readonly hap = {
     Service: SERVICE_TOKENS,
     Characteristic: CHARACTERISTIC_TOKENS,
-    Categories: { SWITCH: 8 },
+    Categories: { SWITCH: 8, SENSOR: 10 },
     uuid: { generate: (seed: string): string => `uuid:${seed}` },
   };
 

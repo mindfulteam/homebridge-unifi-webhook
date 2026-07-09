@@ -2,7 +2,7 @@
   "pluginAlias": "UniFiWebhook",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Momentary HomeKit switches that trigger [UniFi Alarm Manager](https://help.ui.com/hc/en-us/articles/27721287753239) webhooks.\n\n1. In your UniFi console, open **Settings → Control Plane → Integrations** and create an **API key**.\n2. In **Protect → Alarm Manager**, add an alarm, choose **Webhook** as its trigger, and copy the generated webhook URL.\n3. Add a button below and paste that URL.\n\nLegacy `/proxy/protect/api/webhook/<id>` URLs also work — set the method to GET and leave the API key empty.",
+  "headerDisplay": "Bridges HomeKit and [UniFi Alarm Manager](https://help.ui.com/hc/en-us/articles/27721287753239) in both directions.\n\n**Buttons — HomeKit → UniFi.** Momentary switches that fire an Alarm Manager webhook when turned on. Create an API key under **Settings → Control Plane → Integrations**, then in **Protect → Alarm Manager** add an alarm with a **Webhook** trigger and paste its URL below.\n\n**Sensors — UniFi → HomeKit.** Contact/Motion/Occupancy sensors that flip when the Alarm Manager posts to this plugin, so Home app automations can react. Give each sensor a stable **ID**; the plugin prints a ready-to-paste webhook URL in the Homebridge log at startup. In **Protect → Alarm Manager**, add an alarm and a **Webhook** action pointing at that URL.",
   "schema": {
     "type": "object",
     "properties": {
@@ -16,13 +16,13 @@
       "apiKey": {
         "title": "UniFi API Key",
         "type": "string",
-        "description": "Sent as the X-API-KEY header with every webhook request. Required for Integration API webhook URLs; can be overridden per button.",
+        "description": "Sent as the X-API-KEY header with every outgoing button webhook. Required for Integration API webhook URLs; can be overridden per button.",
         "x-schema-form": {
           "type": "password"
         }
       },
       "buttons": {
-        "title": "Buttons",
+        "title": "Buttons (HomeKit → UniFi)",
         "type": "array",
         "items": {
           "title": "Button",
@@ -85,7 +85,75 @@
         "default": 1000,
         "minimum": 100,
         "maximum": 60000,
-        "description": "How long a switch stays on before flipping back off after a successful trigger."
+        "description": "How long a button switch stays on before flipping back off after a successful trigger."
+      },
+      "sensors": {
+        "title": "Sensors (UniFi → HomeKit)",
+        "type": "array",
+        "items": {
+          "title": "Sensor",
+          "type": "object",
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string",
+              "required": true,
+              "placeholder": "e.g. Doorbell Pressed",
+              "description": "The sensor name shown in HomeKit. Rename it any time — the accessory (and its automations) survives."
+            },
+            "id": {
+              "title": "Stable ID",
+              "type": "string",
+              "placeholder": "e.g. doorbell",
+              "description": "Recommended. Anchors the accessory identity and lets the plugin generate and remember the secret webhook URL for you (printed in the log at startup). Required unless you set an explicit Token below."
+            },
+            "sensorType": {
+              "title": "Sensor Type",
+              "type": "string",
+              "default": "contact",
+              "enum": ["contact", "motion", "occupancy"],
+              "description": "Which HomeKit sensor to expose. All three can trigger Home app automations; contact reads as Open/Closed, motion as Detected, occupancy as Occupied."
+            },
+            "resetDelayMs": {
+              "title": "Reset Delay (milliseconds)",
+              "type": "integer",
+              "default": 5000,
+              "minimum": 100,
+              "maximum": 60000,
+              "description": "How long the sensor reads \"detected\" after a webhook before it auto-resets."
+            },
+            "token": {
+              "title": "Token (advanced)",
+              "type": "string",
+              "description": "The secret path segment of this sensor's webhook URL. Leave empty to let the plugin generate one (needs a Stable ID). Set your own only to control the URL — use a long random string.",
+              "x-schema-form": {
+                "type": "password"
+              }
+            }
+          }
+        }
+      },
+      "port": {
+        "title": "Webhook Listener Port",
+        "type": "integer",
+        "default": 51828,
+        "minimum": 1,
+        "maximum": 65535,
+        "description": "Port the plugin listens on for incoming UniFi webhooks (only started when sensors are configured). Must be reachable from your UniFi console and not clash with another service."
+      },
+      "bindHost": {
+        "title": "Bind Address (advanced)",
+        "type": "string",
+        "placeholder": "0.0.0.0",
+        "description": "Network interface the listener binds to. Defaults to all interfaces so the console can reach it; set a specific IP to restrict it."
+      },
+      "webhookSecret": {
+        "title": "Incoming Webhook Secret (advanced)",
+        "type": "string",
+        "description": "Optional shared secret required on incoming webhooks, on top of each sensor's token. Add it in the UniFi webhook action's custom headers as \"Authorization: Bearer <secret>\" or \"X-Webhook-Token: <secret>\".",
+        "x-schema-form": {
+          "type": "password"
+        }
       }
     }
   }

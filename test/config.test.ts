@@ -150,3 +150,131 @@ describe('validateConfig', () => {
     expect(log.error).toHaveBeenCalledTimes(3);
   });
 });
+
+describe('validateConfig — sensors', () => {
+  it('applies defaults to a minimal valid sensor anchored by an id', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({ sensors: [{ name: 'Doorbell', id: 'doorbell' }] }), log);
+
+    expect(config.sensors).toHaveLength(1);
+    expect(config.sensors[0]).toMatchObject({
+      key: 'doorbell',
+      name: 'Doorbell',
+      sensorType: 'contact',
+      token: undefined,
+      resetDelayMs: 5000,
+    });
+    expect(log.warn).not.toHaveBeenCalled();
+    expect(log.error).not.toHaveBeenCalled();
+  });
+
+  it('uses an explicit token as the identity when no id is set', () => {
+    const config = validateConfig(asPlatformConfig({ sensors: [{ name: 'X', token: 'a-long-explicit-token' }] }), createLog());
+
+    expect(config.sensors[0]).toMatchObject({ key: 'a-long-explicit-token', token: 'a-long-explicit-token' });
+  });
+
+  it('skips a sensor that has neither an id nor a token', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({ sensors: [{ name: 'Anon' }] }), log);
+
+    expect(config.sensors).toHaveLength(0);
+    expect(log.error).toHaveBeenCalledOnce();
+  });
+
+  it('skips a sensor without a name', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({ sensors: [{ id: 'x' }] }), log);
+
+    expect(config.sensors).toHaveLength(0);
+    expect(log.error).toHaveBeenCalledOnce();
+  });
+
+  it('normalizes the sensor type and falls back to contact on junk', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({
+      sensors: [
+        { name: 'A', id: 'a', sensorType: 'MOTION' },
+        { name: 'B', id: 'b', sensorType: 'weird' },
+      ],
+    }), log);
+
+    expect(config.sensors[0]?.sensorType).toBe('motion');
+    expect(config.sensors[1]?.sensorType).toBe('contact');
+    expect(log.warn).toHaveBeenCalledOnce();
+  });
+
+  it('warns on a short explicit token but keeps the sensor', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({ sensors: [{ name: 'A', token: 'short' }] }), log);
+
+    expect(config.sensors).toHaveLength(1);
+    expect(log.warn).toHaveBeenCalledOnce();
+  });
+
+  it('clamps the sensor reset delay with a warning', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({ sensors: [{ name: 'A', id: 'a', resetDelayMs: 99 }] }), log);
+
+    expect(config.sensors[0]?.resetDelayMs).toBe(100);
+    expect(log.warn).toHaveBeenCalledOnce();
+  });
+
+  it('rejects duplicate sensor identities and names the earlier sensor', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({
+      sensors: [{ name: 'First', id: 'dup' }, { name: 'Second', id: 'dup' }],
+    }), log);
+
+    expect(config.sensors.map((s) => s.name)).toEqual(['First']);
+    expect(log.error).toHaveBeenCalledWith(expect.stringContaining('"First"'));
+  });
+
+  it('tolerates a malformed sensors value', () => {
+    const log = createLog();
+    expect(validateConfig(asPlatformConfig({ sensors: 'nope' }), log).sensors).toEqual([]);
+    expect(log.error).toHaveBeenCalledOnce();
+  });
+
+  it('lets buttons and sensors coexist', () => {
+    const config = validateConfig(asPlatformConfig({
+      buttons: [{ name: 'B', url: VALID_URL }],
+      sensors: [{ name: 'S', id: 's' }],
+    }), createLog());
+
+    expect(config.buttons).toHaveLength(1);
+    expect(config.sensors).toHaveLength(1);
+  });
+});
+
+describe('validateConfig — server settings', () => {
+  it('defaults the listener settings', () => {
+    const config = validateConfig(asPlatformConfig({}), createLog());
+
+    expect(config.port).toBe(51828);
+    expect(config.bindHost).toBe('0.0.0.0');
+    expect(config.webhookSecret).toBeUndefined();
+  });
+
+  it('accepts a custom port, bind host, and trimmed secret', () => {
+    const config = validateConfig(asPlatformConfig({ port: 8080, bindHost: '127.0.0.1', webhookSecret: '  s3cr3t  ' }), createLog());
+
+    expect(config.port).toBe(8080);
+    expect(config.bindHost).toBe('127.0.0.1');
+    expect(config.webhookSecret).toBe('s3cr3t');
+  });
+
+  it('clamps an out-of-range port with a warning', () => {
+    const log = createLog();
+    const config = validateConfig(asPlatformConfig({ port: 70000 }), log);
+
+    expect(config.port).toBe(65535);
+    expect(log.warn).toHaveBeenCalledOnce();
+  });
+
+  it('falls back to the default port on a non-numeric value', () => {
+    const config = validateConfig(asPlatformConfig({ port: 'nope' }), createLog());
+
+    expect(config.port).toBe(51828);
+  });
+});
