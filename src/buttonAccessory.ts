@@ -21,13 +21,17 @@ const FAILURE_RESET_DELAY_MS = 300;
 /**
  * One momentary HomeKit switch bound to one webhook. Turning it on fires the
  * webhook and the switch flips back off after the configured reset delay —
- * there is no "off" request, because an alarm trigger cannot be un-fired.
+ * there is normally no "off" request, because an alarm trigger cannot be
+ * un-fired. The one exception is a double-press button, whose confirming second
+ * press is itself the "off" toggle.
  */
 export class ButtonAccessory {
   private readonly service: Service;
   private isOn = false;
   private inFlight = false;
   private resetTimer: NodeJS.Timeout | undefined;
+  private armed = false;
+  private armTimer: NodeJS.Timeout | undefined;
 
   constructor(
     private readonly platform: UniFiWebhookPlatform,
@@ -57,28 +61,58 @@ export class ButtonAccessory {
   /** Called on Homebridge shutdown and before the accessory is discarded. */
   dispose(): void {
     this.cancelReset();
+    this.cancelArm();
   }
 
   private handleSet(value: CharacteristicValue): void {
     if (value) {
-      this.trigger();
+      this.handleOn();
     } else {
-      // Manual off before the reset fired: honor it, skip the pending reset.
-      // An in-flight request is not aborted — the webhook may already have
-      // been delivered, and a HomeKit "off" cannot undo it.
-      this.cancelReset();
-      this.isOn = false;
+      this.handleOff();
     }
   }
 
-  private trigger(): void {
+  /**
+   * A HomeKit Switch is a toggle, so pressing the tile twice is naturally an
+   * "on" then an "off". A single-press button fires on the "on". A double-press
+   * button instead uses the "on" to arm — holding the switch on as the armed
+   * indicator — and fires only on the confirming "off". Firing therefore always
+   * needs a deliberate second press, and a scene, automation, or Siri command
+   * that only ever switches the button on can arm it but never fire it.
+   */
+  private handleOn(): void {
     if (this.inFlight) {
       this.platform.log.debug(`"${this.button.name}": trigger already in flight — ignoring`);
       return;
     }
-    this.cancelReset();
+    if (this.button.requireDoublePress) {
+      if (this.armed) {
+        this.platform.log.debug(`"${this.button.name}": already armed — waiting for the confirming press`);
+      } else {
+        this.arm();
+      }
+      return;
+    }
     this.isOn = true;
+    this.dispatch();
+  }
 
+  private handleOff(): void {
+    if (this.armed) {
+      this.cancelArm();
+      this.isOn = false;
+      this.dispatch();
+      return;
+    }
+    // Manual off before the reset fired: honor it, skip the pending reset. An
+    // in-flight request is not aborted — the webhook may already have been
+    // delivered, and a HomeKit "off" cannot undo it.
+    this.cancelReset();
+    this.isOn = false;
+  }
+
+  private dispatch(): void {
+    this.cancelReset();
     if (!this.button.url) {
       this.platform.log.error(
         `Cannot trigger "${this.button.name}": its webhook url is missing or invalid. Fix it in the plugin settings.`,
@@ -142,6 +176,31 @@ export class ButtonAccessory {
       clearTimeout(this.resetTimer);
       this.resetTimer = undefined;
     }
+  }
+
+  private arm(): void {
+    this.armed = true;
+    this.isOn = true;
+    this.platform.log.info(
+      `"${this.button.name}": armed — press again within ${this.button.doublePressWindowMs / 1000}s to fire (double-press confirmation)`,
+    );
+    this.armTimer = setTimeout(() => {
+      this.armTimer = undefined;
+      this.armed = false;
+      this.isOn = false;
+      this.service.updateCharacteristic(this.platform.Characteristic.On, false);
+      this.platform.log.debug(`"${this.button.name}": confirmation window elapsed — webhook not fired`);
+    }, this.button.doublePressWindowMs);
+    // Never keep the process alive just to lapse an unconfirmed arm.
+    this.armTimer.unref();
+  }
+
+  private cancelArm(): void {
+    if (this.armTimer) {
+      clearTimeout(this.armTimer);
+      this.armTimer = undefined;
+    }
+    this.armed = false;
   }
 }
 

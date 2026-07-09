@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-07-09
+
+### Added
+
+- **Double-press confirmation for buttons (safety guard).** Set
+  `requireDoublePress: true` on a button to require two presses within a short
+  window before its webhook fires — protection against an accidental single tap
+  on destructive actions like a siren. Press the switch once to arm it (it stays
+  on to show it is waiting), then press again within the window to fire; the
+  window is configurable per button via `doublePressWindowSeconds` (default `3`,
+  range 1–30). A single activation only arms the button, so a scene, automation,
+  or Siri command that switches it on can arm it but will not fire it.
+
+### Notes
+
+- Fully backward compatible — buttons default to single-press behavior.
+
 ## [1.1.0] - 2026-07-09
 
 ### Added
@@ -65,5 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full configuration UI (`config.schema.json`) for the Homebridge UI.
 - Secret hygiene: API keys never logged, webhook ids masked in logged URLs.
 
+[1.1.1]: https://github.com/mindfulteam/homebridge-unifi-webhook/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/mindfulteam/homebridge-unifi-webhook/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/mindfulteam/homebridge-unifi-webhook/releases/tag/v1.0.1

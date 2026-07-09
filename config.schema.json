@@ -63,6 +63,20 @@
               "title": "Stable ID (advanced)",
               "type": "string",
               "description": "Optional identity anchor. Set it before the first launch if you may rotate the webhook URL later, or if two buttons share one URL. Adding or changing it afterwards re-creates the accessory in HomeKit."
+            },
+            "requireDoublePress": {
+              "title": "Require Double Press (safety)",
+              "type": "boolean",
+              "default": false,
+              "description": "Safety guard against accidental triggers: press the switch once to arm it (it stays on to show it is waiting), then press again within the confirmation window to fire the webhook. A single activation only arms the button — so a scene, automation, or Siri command that switches it on can arm it but will not fire it."
+            },
+            "doublePressWindowSeconds": {
+              "title": "Confirmation Window (seconds)",
+              "type": "integer",
+              "default": 3,
+              "minimum": 1,
+              "maximum": 30,
+              "description": "How long you have to press a second time after the first (arming) press. Only applies when Require Double Press is on."
             }
           }
         }
@@ -180,7 +194,9 @@
             "buttons[].url",
             "buttons[].method",
             "buttons[].apiKey",
-            "buttons[].id"
+            "buttons[].id",
+            "buttons[].requireDoublePress",
+            "buttons[].doublePressWindowSeconds"
           ]
         },
         "allowSelfSigned",
