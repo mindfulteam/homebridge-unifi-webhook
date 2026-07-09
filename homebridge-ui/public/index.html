@@ -1,0 +1,20 @@
+<style>
+  #uw-webhook-urls { margin-bottom: 1rem; }
+  #uw-webhook-urls .uw-sensor { padding: 0.5rem 0; border-top: 1px solid rgba(128, 128, 128, 0.2); }
+  #uw-webhook-urls .uw-sensor:first-child { border-top: 0; }
+  #uw-webhook-urls .uw-name { font-weight: 600; margin-bottom: 0.25rem; }
+  #uw-webhook-urls .uw-url-row { display: flex; gap: 0.5rem; align-items: center; }
+  #uw-webhook-urls .uw-url { flex: 1; word-break: break-all; padding: 0.2rem 0.4rem; }
+  #uw-webhook-urls .uw-hint { color: #888; font-size: 0.85rem; }
+  #uw-webhook-urls .uw-sensor .uw-hint { margin-left: 0.5rem; }
+</style>
+
+<div id="uw-webhook-urls" class="card card-body">
+  <h5 class="mb-1">Incoming webhook URLs</h5>
+  <p class="uw-hint mb-2">
+    Paste a sensor's URL into its UniFi Alarm Manager <em>Webhook</em> action. The host is guessed from this page's address — swap it for a console-reachable IP if needed.
+  </p>
+  <div id="uw-list"></div>
+</div>
+
+<script src="ui.js"></script>

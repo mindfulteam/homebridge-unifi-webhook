@@ -148,13 +148,13 @@ Point a UniFi Alarm Manager **webhook action** at this plugin and it flips a Hom
 ### Add a sensor
 
 1. Add a sensor in the plugin settings: give it a **name** and a stable **ID** (e.g. `doorbell`), and pick a **sensor type** (contact is the default).
-2. Restart Homebridge and open the log. The plugin prints a ready-to-paste URL for each sensor, once:
+2. Get the sensor's webhook URL. In the plugin settings, the **Incoming webhook URLs** panel shows each sensor's ready-to-paste URL with a **Copy** button — click **Generate secret** first for any sensor that doesn't have one yet. (It's also printed in the Homebridge log at startup.)
 
    ```text
    Sensor "Doorbell Pressed" (contact) — paste into the UniFi Alarm Manager webhook action: http://192.168.1.50:51828/webhook/Xy…long-secret…
    ```
 
-   That URL contains the sensor's secret token — treat it like a password.
+   The URL contains the sensor's secret token — treat it like a password.
 3. In **Protect → Alarm Manager**, create an alarm for the event you care about, add a **Webhook** action, and paste the URL. Leave the method as the default (GET) or set POST — both work.
 
 When the alarm fires, the sensor flips to *detected* and your HomeKit automations run.
@@ -250,16 +250,13 @@ node scripts/fire-webhook.mjs --token dev-doorbell-token-change-me   # incoming:
 
 ### Releasing (maintainers)
 
-Versions follow [SemVer](https://semver.org). Publishing is tokenless — the **Publish to npm** workflow authenticates to npm over OIDC ([trusted publishing](https://docs.npmjs.com/trusted-publishers)) and attaches provenance. The workflow reads `package.json` and picks the npm [dist-tag](https://docs.npmjs.com/adding-dist-tags-to-packages) from the version: a plain version goes to `latest`, a pre-release (`-beta.N`) goes to `beta`. So a beta can never accidentally land on `latest`.
+Versions follow [SemVer](https://semver.org). The pipeline is hands-off and tokenless:
 
-**Stable release.** Bump the version (`npm version patch|minor|major`) and update the [CHANGELOG](CHANGELOG.md) on `main`, then cut a GitHub release: `gh release create vX.Y.Z --notes …`. That triggers the workflow, which publishes to `latest`.
+1. **Bump + changelog on `main`.** `npm version patch|minor|major` (or `npm run version:beta` for `X.Y.Z-beta.N`; for the first beta of a new line, `npm version preminor --preid=beta`), and record the changes under the top section of the [CHANGELOG](CHANGELOG.md).
+2. **The release is created for you.** On push to `main`, the **Release** workflow reads `package.json` and, if no release exists for that version, creates one — using the top CHANGELOG section as the notes and marking it *pre-release* for `-beta` versions. (Trigger it manually any time via **Actions → Release → Run workflow**.)
+3. **npm publish is automatic.** Creating the release triggers **Publish to npm**, which authenticates over OIDC ([trusted publishing](https://docs.npmjs.com/trusted-publishers)) with provenance and picks the npm [dist-tag](https://docs.npmjs.com/adding-dist-tags-to-packages) from the version — a plain version → `latest`, a `-beta.N` → `beta`. So a beta can never land on `latest`.
 
-**Beta / pre-release.** Cut a pre-release version (`npm run version:beta` → `X.Y.Z-beta.N`; for the first beta of a new line use `npm version preminor --preid=beta` or `prepatch --preid=beta`) and push it. Then publish it either way:
-
-- **Actions → Publish to npm → Run workflow** (a `workflow_dispatch`, no GitHub release needed), or
-- `gh release create vX.Y.Z-beta.N --prerelease --notes …`.
-
-Because the version carries `-beta`, the workflow publishes under the `@beta` tag. Testers install it with `npm install -g homebridge-unifi-webhook@beta`, and Homebridge UI offers it when *pre-release versions* are enabled for the plugin. To publish a beta by hand instead, `npm publish --tag beta` from a `-beta` version does the same thing. When the beta is solid, release the matching stable version to move `latest` forward.
+Testers install a beta with `npm install -g homebridge-unifi-webhook@beta` (or enable *pre-release versions* on the plugin in the Homebridge UI). When a beta is solid, bump the matching stable version to move `latest` forward.
 
 ## License
 
