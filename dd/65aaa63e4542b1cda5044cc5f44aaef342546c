@@ -1,0 +1,88 @@
+config.schema.json
+  s_f968892555e89e::t_751aab5daf32cd 5,19,25,88-156
+test/platform.test.ts
+  s_f968892555e89e::t_4b63878fe2af5a 138-227
+  s_f968892555e89e::t_91ec4e1e763266 31-32
+  s_f968892555e89e::t_7bbd169220c567 2,6,16-22
+  s_f968892555e89e::t_f232d5d50efdb3 23
+src/config.ts
+  s_f968892555e89e::t_ec2c6878d455d7 326-339
+  s_f968892555e89e::t_3cc234cc96044b 5-6,12-15,20-26
+  s_f968892555e89e::t_78d5e467454ef6 43-58,61,65-70
+  s_f968892555e89e::t_90c9782d8f963d 115-119,122,126-203
+CHANGELOG.md
+  s_f968892555e89e::t_da21347c943852 12-35
+  s_f968892555e89e::t_154bf2e31b038e 10-11
+test/sensorAccessory.test.ts
+  s_f968892555e89e::t_908970fff77a27 64
+  s_f968892555e89e::t_de8da320bbe3a7 1-6,8-63,65-145
+  s_f968892555e89e::t_2af503af847c3d 7
+test/config.test.ts
+  s_f968892555e89e::t_021b4841089159 153-280
+package.json
+  s_f968892555e89e::t_ab6f86e07bb15b 6
+  s_f968892555e89e::t_c6661be0036a3b 5
+  s_f968892555e89e::t_b12ab745ca014c 46
+src/settings.ts
+  s_f968892555e89e::t_314bd429a0d957 17-18,21-27
+src/buttonAccessory.ts
+  s_f968892555e89e::t_f8a35d0c18734a 44
+  s_f968892555e89e::t_897dabd4b96b42 7
+src/sensorAccessory.ts
+  s_f968892555e89e::t_e1d41fcc8b634b 1-4,6-54,56-81,91-144
+  s_f968892555e89e::t_a17f419efe32f4 82-90
+  s_f968892555e89e::t_209127c66b1b52 5
+  s_f968892555e89e::t_313bd63f0d4fad 55
+README.md
+  s_f968892555e89e::t_e6fb7580f087fe 253-262
+  s_f968892555e89e::t_c84827d2040b1e 45-50
+  s_f968892555e89e::t_bba057f308d771 51-55
+  s_f968892555e89e::t_577624cef3de16 244,246,249
+  s_f968892555e89e::t_6ded5ec8a8f05c 144-201,204,206-209
+  s_f968892555e89e::t_a057a961f2af50 222-225
+  s_f968892555e89e::t_cef24e195a54a4 12,14-15,17-22,25
+  s_f968892555e89e::t_be92ce0d87b1fd 102-109
+  s_f968892555e89e::t_07b2fbc3f714b3 231-234
+test/buttonAccessory.test.ts
+  s_f968892555e89e::t_e8eaa4d89b91df 8
+  s_f968892555e89e::t_a954e1372b9d6b 84
+.github/workflows/build.yml
+  s_f968892555e89e::t_84beda1b647952 5
+scripts/fire-webhook.mjs
+  s_f968892555e89e::t_71f693d2ecf6eb 1-57
+.github/workflows/publish.yml
+  s_f968892555e89e::t_6d3c3071eb9cdc 6-8,32-48,52
+src/platform.ts
+  s_f968892555e89e::t_c968c3ad4c15da 1-3,7-8,11,15-19,21-24,34-37,67,71-72,76-103,113-114,120,122,138,140-184,186-198,200-211,215-216,223-241
+  s_f968892555e89e::t_9d3129473a86be 44-45,50
+src/webhookServer.ts
+  s_f968892555e89e::t_236b0d260311f3 1-132,135,137-165,169-170,172-175,179-180,182-185,188-196,198-304
+  s_f968892555e89e::t_a509fb3351fc2b 133-134,136
+  s_f968892555e89e::t_ed29879f474bd7 166-168,171,176-178,181,186-187,197
+src/redact.ts
+  s_f968892555e89e::t_225e1d41f65823 1-11,28,34-53
+test/webhookServer.test.ts
+  s_f968892555e89e::t_269e81242c2b01 1-210
+test/hbConfig/config.json
+  s_f968892555e89e::t_180b154960f938 24-40
+test/mocks/homebridgeApi.ts
+  s_f968892555e89e::t_3df02420f0c46b 9-11,21-24
+  s_f968892555e89e::t_c1a07c9d963e7f 100
+  s_f968892555e89e::t_1090f0de6a7870 81-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dd65aaa63e4542b1cda5044cc5f44aaef342546c",
+  "prompts": {},
+  "sessions": {
+    "s_f968892555e89e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "271bf723-34e3-48fd-856c-82cf84bceb9e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
