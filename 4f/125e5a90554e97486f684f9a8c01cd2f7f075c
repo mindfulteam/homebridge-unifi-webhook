@@ -1,0 +1,46 @@
+test/webhookServer.test.ts
+  s_f968892555e89e::t_691a27e01889bd 194-210,214-216,219-222,229-237
+  s_f968892555e89e::t_77236ee3388bbd 211-213,217-218
+  s_f968892555e89e::t_1ee2d8867ecf4a 223-228
+src/redact.ts
+  s_f968892555e89e::t_f26f2e3a7fb1a4 35
+  s_f968892555e89e::t_f49d3e67641e76 36,46-52
+src/platform.ts
+  s_f968892555e89e::t_8ea3ce83a66fa2 148,158,166,181
+  s_f968892555e89e::t_228e290eb8abba 193,195,197-200,202,208-209
+  s_f968892555e89e::t_c2249b659e2560 192
+src/sensorAccessory.ts
+  s_f968892555e89e::t_2f611086b8ecb1 14
+test/redact.test.ts
+  s_f968892555e89e::t_ae0693b61a9ba1 3
+  s_f968892555e89e::t_8ab30449588160 59
+  s_f968892555e89e::t_4187703dfa755d 32-55,57-58,60-62
+  s_f968892555e89e::t_298899222dafee 56
+src/webhookServer.ts
+  s_f968892555e89e::t_3e9c3cf246ed0d 122,132-142
+  s_f968892555e89e::t_c592ccd5a579d3 277
+src/config.ts
+  s_f968892555e89e::t_57a9a88de6a369 140,154-163
+  s_f968892555e89e::t_edb3c0b2999aca 164
+test/config.test.ts
+  s_f968892555e89e::t_be02aa59342978 233-245
+test/platform.test.ts
+  s_f968892555e89e::t_18574ee5a6d474 174,192-212
+  s_f968892555e89e::t_3d9084ddd36d2b 213-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4f125e5a90554e97486f684f9a8c01cd2f7f075c",
+  "prompts": {},
+  "sessions": {
+    "s_f968892555e89e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "271bf723-34e3-48fd-856c-82cf84bceb9e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
