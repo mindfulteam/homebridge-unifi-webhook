@@ -1,0 +1,21 @@
+scripts/deploy-pi.sh
+  s_e272eb57211273::t_ac0354ab290fe8 1-34
+package.json
+  s_e272eb57211273::t_de0177174806ba 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3e2921d08810c1cde79a8b9539f62fa0f188091a",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
