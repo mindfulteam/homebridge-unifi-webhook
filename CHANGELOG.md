@@ -31,9 +31,10 @@ Now available as a pre-release for testing — install with
 - **Settings UI.** The plugin settings are grouped into outgoing (Buttons) and
   incoming (Sensors) sections, and a custom panel generates a sensor's secret and
   shows its ready-to-paste webhook URL with a copy button — no digging in the logs.
-- Automated releases: a `release` workflow creates the GitHub release from the
-  `package.json` version on push to `main` (using the top CHANGELOG section as
-  notes, marked pre-release for `-beta` versions), which then triggers the npm publish.
+- Release helper: a manually-run `release` workflow (**Actions → Release**) creates
+  the GitHub release from the `package.json` version, using the top CHANGELOG section
+  as the notes and marking `-beta` versions as pre-release. Publishing to npm stays a
+  separate manual **Publish to npm** workflow — nothing releases or publishes on merge.
 
 ### Notes
 

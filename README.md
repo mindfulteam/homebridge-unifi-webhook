@@ -250,11 +250,11 @@ node scripts/fire-webhook.mjs --token dev-doorbell-token-change-me   # incoming:
 
 ### Releasing (maintainers)
 
-Versions follow [SemVer](https://semver.org). The pipeline is hands-off and tokenless:
+Versions follow [SemVer](https://semver.org). Releasing is two manual steps — nothing runs on merge — and tokenless:
 
 1. **Bump + changelog on `main`.** `npm version patch|minor|major` (or `npm run version:beta` for `X.Y.Z-beta.N`; for the first beta of a new line, `npm version preminor --preid=beta`), and record the changes under the top section of the [CHANGELOG](CHANGELOG.md).
-2. **The release is created for you.** On push to `main`, the **Release** workflow reads `package.json` and, if no release exists for that version, creates one — using the top CHANGELOG section as the notes and marking it *pre-release* for `-beta` versions. (Trigger it manually any time via **Actions → Release → Run workflow**.)
-3. **npm publish is automatic.** Creating the release triggers **Publish to npm**, which authenticates over OIDC ([trusted publishing](https://docs.npmjs.com/trusted-publishers)) with provenance and picks the npm [dist-tag](https://docs.npmjs.com/adding-dist-tags-to-packages) from the version — a plain version → `latest`, a `-beta.N` → `beta`. So a beta can never land on `latest`.
+2. **Create the release** — **Actions → Release → Run workflow**. It reads `package.json` and, if no release exists for that version, creates the GitHub release using the top CHANGELOG section as the notes, marked *pre-release* for `-beta` versions.
+3. **Publish to npm** — **Actions → Publish to npm → Run workflow**. It authenticates over OIDC ([trusted publishing](https://docs.npmjs.com/trusted-publishers)) with provenance and picks the npm [dist-tag](https://docs.npmjs.com/adding-dist-tags-to-packages) from the version: a plain version → `latest`, a `-beta.N` → `beta`. So a beta can never land on `latest`.
 
 Testers install a beta with `npm install -g homebridge-unifi-webhook@beta` (or enable *pre-release versions* on the plugin in the Homebridge UI). When a beta is solid, bump the matching stable version to move `latest` forward.
 

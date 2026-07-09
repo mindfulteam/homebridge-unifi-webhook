@@ -1,8 +1,7 @@
 name: Release
 
 on:
-  push:
-    branches: [main]
+  # Manual only — run "Release" from the Actions tab when you want to cut a release.
   workflow_dispatch:
 
 permissions:
