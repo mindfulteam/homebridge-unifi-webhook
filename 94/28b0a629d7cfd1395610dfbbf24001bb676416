@@ -1,0 +1,36 @@
+config.schema.json
+  s_e272eb57211273::t_f53585a2e2bf1f 1-92
+src/webhookClient.ts
+  s_e272eb57211273::t_01d997c10e88ff 1-121
+src/buttonAccessory.ts
+  s_e272eb57211273::t_90d2e6f58fd1f0 1-165
+src/index.ts
+  s_e272eb57211273::t_f105dd4203c5f3 1-12
+src/config.ts
+  s_e272eb57211273::t_6d8808655971b1 1-102,104-105,107-108,110-113,115-119,121-125,131-132,137-142,144-145,147-150,152-205
+  s_e272eb57211273::t_81c80c241e222c 106
+  s_e272eb57211273::t_4b6ed8cca4484b 103,109,114,126-130,133-136,143,146,151
+  s_e272eb57211273::t_62eb8e0646e8b9 120
+src/redact.ts
+  s_e272eb57211273::t_183ecdf198a4e4 1-22
+src/platform.ts
+  s_e272eb57211273::t_05c77b62114159 1-110
+src/settings.ts
+  s_e272eb57211273::t_08d4ee33674e69 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9428b0a629d7cfd1395610dfbbf24001bb676416",
+  "prompts": {},
+  "sessions": {
+    "s_e272eb57211273": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6799bac6-000e-4e8d-9f6f-490461fc86a1",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Stefan H. <stefan.hiienurm@gmail.com>"
+    }
+  }
+}
