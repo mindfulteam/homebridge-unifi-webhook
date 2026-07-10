@@ -5,7 +5,6 @@
 # homebridge-unifi-webhook
 
 [![npm version](https://img.shields.io/npm/v/homebridge-unifi-webhook)](https://www.npmjs.com/package/homebridge-unifi-webhook)
-[![npm downloads](https://img.shields.io/npm/dt/homebridge-unifi-webhook)](https://www.npmjs.com/package/homebridge-unifi-webhook)
 [![Build and Test](https://github.com/mindfulteam/homebridge-unifi-webhook/actions/workflows/build.yml/badge.svg)](https://github.com/mindfulteam/homebridge-unifi-webhook/actions/workflows/build.yml)
 [![License](https://img.shields.io/npm/l/homebridge-unifi-webhook)](LICENSE)
 
